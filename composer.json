@@ -1,0 +1,22 @@
+{
+    "name": "fasterfy/ai-media-optimizer",
+    "description": "Optimización masiva e inteligente de activos visuales para WordPress: WebP/AVIF, compresión, sanitización SVG e IA multimodal.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.0"
+    },
+    "suggest": {
+        "woocommerce/action-scheduler": "Cola de trabajos asíncrona robusta para el procesamiento retroactivo en segundo plano.",
+        "ext-imagick": "Mejor calidad de conversión AVIF/WebP y cuantización PNG.",
+        "ext-gd": "Procesamiento de imágenes de respaldo cuando Imagick no está disponible."
+    },
+    "autoload": {
+        "psr-4": {
+            "FasterFy\\": "includes/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}

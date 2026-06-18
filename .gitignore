@@ -1,0 +1,19 @@
+# Dependencias
+/vendor/
+/node_modules/
+
+# Build / empaquetado
+*.zip
+/dist/
+/build/
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+.idea/
+.vscode/
+
+# WordPress local
+wp-cli.local.yml
