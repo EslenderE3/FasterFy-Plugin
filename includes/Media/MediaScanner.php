@@ -100,6 +100,7 @@ final class MediaScanner {
 			'total'           => $total,
 			'optimized'       => $optimized,
 			'pending'         => $pending,
+			'ai_pending'      => $this->count_ai_pending(),
 			'by_type'         => $by_type,
 			'total_saved'     => (int) ( $stats['total_saved'] ?? 0 ),
 			'total_optimized' => (int) ( $stats['total_optimized'] ?? 0 ),
@@ -149,6 +150,69 @@ final class MediaScanner {
 	public function count_pending(): int {
 		$summary = $this->summary();
 		return (int) $summary['pending'];
+	}
+
+	/**
+	 * Obtiene IDs de adjuntos pendientes de IA (sin alt text aplicado).
+	 * Incluye los que fallaron (para reintentar), hasta un máximo de intentos,
+	 * y excluye los ya completados ('done') o bloqueados por moderación ('blocked').
+	 *
+	 * @param int $limit        Máximo de IDs a devolver.
+	 * @param int $max_attempts Máximo de reintentos por activo.
+	 * @return int[]
+	 */
+	public function ai_pending_ids( int $limit = 50, int $max_attempts = 3 ): array {
+		global $wpdb;
+
+		$mime_in      = $this->mime_in_clause();
+		$limit        = max( 1, $limit );
+		$max_attempts = max( 1, $max_attempts );
+
+		$sql = $wpdb->prepare(
+			"SELECT p.ID
+			 FROM {$wpdb->posts} p
+			 LEFT JOIN {$wpdb->postmeta} s ON s.post_id = p.ID AND s.meta_key = '_fasterfy_ai_status'
+			 LEFT JOIN {$wpdb->postmeta} a ON a.post_id = p.ID AND a.meta_key = '_fasterfy_ai_attempts'
+			 WHERE p.post_type = 'attachment'
+			   AND p.post_mime_type IN ({$mime_in})
+			   AND ( s.meta_value IS NULL OR s.meta_value NOT IN ( 'done', 'blocked' ) )
+			   AND ( a.meta_value IS NULL OR CAST( a.meta_value AS UNSIGNED ) < %d )
+			 ORDER BY p.ID ASC
+			 LIMIT %d",
+			$max_attempts,
+			$limit
+		);
+
+		$ids = array_map( 'intval', (array) $wpdb->get_col( $sql ) ); // phpcs:ignore
+
+		return array_values( array_filter( $ids, fn( int $id ): bool => ! $this->is_excluded( $id ) ) );
+	}
+
+	/**
+	 * Cuenta los adjuntos pendientes de IA.
+	 *
+	 * @param int $max_attempts Máximo de reintentos por activo.
+	 * @return int
+	 */
+	public function count_ai_pending( int $max_attempts = 3 ): int {
+		global $wpdb;
+
+		$mime_in      = $this->mime_in_clause();
+		$max_attempts = max( 1, $max_attempts );
+
+		$sql = $wpdb->prepare(
+			"SELECT COUNT(DISTINCT p.ID)
+			 FROM {$wpdb->posts} p
+			 LEFT JOIN {$wpdb->postmeta} s ON s.post_id = p.ID AND s.meta_key = '_fasterfy_ai_status'
+			 LEFT JOIN {$wpdb->postmeta} a ON a.post_id = p.ID AND a.meta_key = '_fasterfy_ai_attempts'
+			 WHERE p.post_type = 'attachment'
+			   AND p.post_mime_type IN ({$mime_in})
+			   AND ( s.meta_value IS NULL OR s.meta_value NOT IN ( 'done', 'blocked' ) )
+			   AND ( a.meta_value IS NULL OR CAST( a.meta_value AS UNSIGNED ) < %d )",
+			$max_attempts
+		);
+
+		return (int) $wpdb->get_var( $sql ); // phpcs:ignore
 	}
 
 	/**
@@ -237,6 +301,7 @@ final class MediaScanner {
 				'mime'           => $row['post_mime_type'],
 				'thumb'          => wp_get_attachment_image_url( $id, 'thumbnail' ),
 				'status'         => get_post_meta( $id, '_fasterfy_status', true ) ?: 'pending',
+				'ai_status'      => get_post_meta( $id, '_fasterfy_ai_status', true ) ?: '',
 				'alt'            => get_post_meta( $id, '_wp_attachment_image_alt', true ),
 				'saved_bytes'    => (int) get_post_meta( $id, '_fasterfy_saved_bytes', true ),
 				'format_to'      => get_post_meta( $id, '_fasterfy_format_to', true ),

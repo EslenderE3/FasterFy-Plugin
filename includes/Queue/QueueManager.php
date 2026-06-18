@@ -162,7 +162,9 @@ final class QueueManager implements Bootable {
 		$mode      = in_array( $args['mode'] ?? 'optimize', [ 'optimize', 'ai', 'both' ], true ) ? $args['mode'] : 'optimize';
 		$overrides = (array) ( $args['overrides'] ?? [] );
 
-		$total = $this->scanner->count_pending();
+		$total = ( 'ai' === $mode )
+			? $this->scanner->count_ai_pending()
+			: $this->scanner->count_pending();
 
 		$state = $this->set_state(
 			[
@@ -314,16 +316,21 @@ final class QueueManager implements Bootable {
 		}
 
 		$batch_size = (int) $this->settings->get( 'throttling.batch_size', 10 );
-		$ids        = $this->scanner->pending_ids( $batch_size );
+		$mode       = (string) $state['mode'];
+		$overrides  = (array) $state['overrides'];
+
+		// Selecciona el conjunto de pendientes según el modo:
+		// 'ai' usa su propia cola (activos sin texto IA, con reintentos),
+		// 'optimize' y 'both' usan la cola de optimización.
+		$ids = ( 'ai' === $mode )
+			? $this->scanner->ai_pending_ids( $batch_size )
+			: $this->scanner->pending_ids( $batch_size );
 
 		if ( empty( $ids ) ) {
 			$this->set_state( [ 'status' => 'completed' ] );
 			$this->logger->info( __( 'Procesamiento de la biblioteca completado.', 'fasterfy' ), 'queue' );
 			return;
 		}
-
-		$mode      = (string) $state['mode'];
-		$overrides = (array) $state['overrides'];
 
 		foreach ( $ids as $id ) {
 			$outcome = $this->process_item( (int) $id, $mode, $overrides );
@@ -353,7 +360,11 @@ final class QueueManager implements Bootable {
 		);
 
 		// ¿Quedan pendientes? Programa el siguiente lote con cooldown.
-		if ( $this->scanner->count_pending() > 0 ) {
+		$remaining = ( 'ai' === $mode )
+			? $this->scanner->count_ai_pending()
+			: $this->scanner->count_pending();
+
+		if ( $remaining > 0 ) {
 			$cooldown = (int) $this->settings->get( 'throttling.cooldown_seconds', 5 );
 			$this->enqueue_next_batch( $cooldown );
 		} else {
@@ -412,8 +423,12 @@ final class QueueManager implements Bootable {
 			return 'success';
 		}
 
-		// Si nada falló pero tampoco hubo cambios, márcalo optimizado para no reprocesar.
-		update_post_meta( $attachment_id, '_fasterfy_status', 'optimized' );
+		// Si nada cambió, marca el estado para no reprocesar en bucle.
+		// En modo solo-IA no tocamos el estado de optimización (los reintentos
+		// de IA se controlan con el contador de intentos en el escáner).
+		if ( in_array( $mode, [ 'optimize', 'both' ], true ) ) {
+			update_post_meta( $attachment_id, '_fasterfy_status', 'optimized' );
+		}
 		return 'skipped';
 	}
 

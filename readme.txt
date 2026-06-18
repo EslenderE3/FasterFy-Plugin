@@ -75,6 +75,12 @@ Todas las rutas requieren capacidad `manage_options` y nonce `wp_rest`.
 
 == Changelog ==
 
+= 1.0.3 =
+* Acciones masivas en la Biblioteca: "Optimizar todo", "Optimizar + IA (todo)" y "Generar textos IA (todo)".
+* Nueva cola de IA independiente que detecta y reprocesa los activos sin texto, con reintentos automáticos (hasta 3) para tolerar límites de velocidad de la API.
+* Barra de progreso de la cola visible también en la Biblioteca, con pausar/reanudar/detener.
+* Indicador del estado de IA (✓ / ✕ / bloqueado) en cada fila de la tabla.
+
 = 1.0.2 =
 * IA: nueva generación del campo "Descripción" del adjunto (post_content).
 * IA: nueva opción "Título con guiones (SEO)" que separa las palabras del título con guiones.

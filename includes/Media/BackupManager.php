@@ -239,6 +239,8 @@ final class BackupManager implements Bootable {
 			'_fasterfy_optimized_at',
 			'_fasterfy_renamed_to',
 			'_fasterfy_ai_status',
+			'_fasterfy_ai_attempts',
+			'_fasterfy_ai_at',
 		];
 		foreach ( $keys as $key ) {
 			delete_post_meta( $attachment_id, $key );

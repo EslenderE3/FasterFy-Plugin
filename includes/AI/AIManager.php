@@ -114,6 +114,8 @@ final class AIManager implements Bootable {
 
 		$file = get_attached_file( $attachment_id );
 		if ( ! $file || ! file_exists( $file ) ) {
+			$this->bump_ai_attempts( $attachment_id );
+			update_post_meta( $attachment_id, '_fasterfy_ai_status', 'error' );
 			$fail['message'] = __( 'No se encontró el archivo del adjunto.', 'fasterfy' );
 			return $fail;
 		}
@@ -134,6 +136,7 @@ final class AIManager implements Bootable {
 		$result = $this->provider()->analyze( $file, $context );
 
 		if ( ! $result->success ) {
+			$this->bump_ai_attempts( $attachment_id );
 			update_post_meta( $attachment_id, '_fasterfy_ai_status', 'error' );
 			$this->logger->error( $result->message, 'ai', $attachment_id );
 			$fail['message'] = $result->message;
@@ -237,6 +240,17 @@ final class AIManager implements Bootable {
 			'alt'     => $fallback,
 			'message' => __( 'Contenido sensible: optimización técnica aplicada, IA generativa omitida.', 'fasterfy' ),
 		];
+	}
+
+	/**
+	 * Incrementa el contador de intentos de IA de un adjunto.
+	 *
+	 * @param int $attachment_id ID.
+	 * @return void
+	 */
+	private function bump_ai_attempts( int $attachment_id ): void {
+		$attempts = (int) get_post_meta( $attachment_id, '_fasterfy_ai_attempts', true );
+		update_post_meta( $attachment_id, '_fasterfy_ai_attempts', $attempts + 1 );
 	}
 
 	/**

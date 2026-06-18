@@ -287,8 +287,8 @@
 	 * Vista: Biblioteca (medios)
 	 * ============================================================ */
 	function viewMedia( view ) {
-		view.innerHTML = topbar( 'Biblioteca', 'Optimización retroactiva y mutación nativa de medios.',
-			'<button class="ff-btn ff-btn--primary" data-action="start-queue" data-mode="' + ( State.settings.ai && State.settings.ai.enabled ? 'both' : 'optimize' ) + '">⚡ Optimizar pendientes</button>' ) +
+		view.innerHTML = topbar( 'Biblioteca', 'Optimización retroactiva y mutación nativa de medios.', '' ) +
+			bulkActionsCard() +
 			'<div class="ff-toolbar">' +
 				'<div class="ff-tabs" data-action="media-tab">' +
 					tabBtn( 'all', 'Todos' ) + tabBtn( 'pending', 'Pendientes' ) + tabBtn( 'optimized', 'Optimizados' ) +
@@ -296,6 +296,61 @@
 			'</div>' +
 			'<div class="ff-card"><div id="ff-media-table"></div></div>';
 		loadMedia();
+		refreshQueueStatus();
+	}
+
+	/**
+	 * Tarjeta de acciones masivas (procesamiento de toda la biblioteca por lotes).
+	 */
+	function bulkActionsCard() {
+		var aiOn = State.settings.ai && State.settings.ai.enabled;
+		var buttons = '<button class="ff-btn ff-btn--primary" data-action="start-queue" data-mode="optimize">⚡ Optimizar todo</button>';
+		if ( aiOn ) {
+			buttons += '<button class="ff-btn ff-btn--accent" data-action="start-queue" data-mode="both">✨ Optimizar + IA (todo)</button>';
+			buttons += '<button class="ff-btn" data-action="start-queue" data-mode="ai">🧠 Generar textos IA (todo)</button>';
+		}
+		return '<div class="ff-card ff-card--pad-lg" style="margin-bottom:18px">' +
+			'<h3>Acciones masivas</h3>' +
+			'<p class="ff-muted" style="margin:-6px 0 16px;font-size:13px">Procesa toda la biblioteca en segundo plano, por lotes. Puedes cerrar esta página: el trabajo continúa en el servidor.</p>' +
+			'<div class="ff-row" id="ff-bulk-buttons">' + buttons + '</div>' +
+			( aiOn ? '' : '<p class="ff-muted ff-mt" style="font-size:12px">💡 Activa la IA en la pestaña <b>IA & SEO</b> para generar textos en lote.</p>' ) +
+			'<div id="ff-media-queue" class="ff-mt"></div>' +
+		'</div>';
+	}
+
+	/** Consulta el estado de la cola y pinta la barra de progreso de la Biblioteca. */
+	function refreshQueueStatus() {
+		return Api.get( '/queue/status' ).then( function ( res ) {
+			State.queue = res.queue;
+			if ( State.summary ) { State.summary.library = res.library; State.summary.queue = res.queue; }
+			renderMediaQueueBar();
+			if ( res.queue.status === 'running' ) { startPolling(); }
+		} ).catch( function () {} );
+	}
+
+	/** Etiqueta legible del modo de cola. */
+	function queueModeLabel( mode ) {
+		if ( 'ai' === mode ) { return '(textos IA)'; }
+		if ( 'both' === mode ) { return '(optimización + IA)'; }
+		return '(optimización)';
+	}
+
+	/** Pinta la barra de progreso de la cola dentro de la Biblioteca. */
+	function renderMediaQueueBar() {
+		var el = document.getElementById( 'ff-media-queue' );
+		if ( ! el ) { return; }
+		var q = State.queue;
+		if ( ! q || 'idle' === q.status ) { el.innerHTML = ''; return; }
+		el.innerHTML = '<div style="border-top:1px solid var(--ff-border);padding-top:16px;margin-top:6px">' +
+			'<div class="ff-row" style="justify-content:space-between;margin-bottom:10px">' +
+				'<b>Progreso ' + queueModeLabel( q.mode ) + '</b>' + queuePill( q.status ) +
+			'</div>' + queuePanel( q ) + '</div>';
+	}
+
+	/** Refresca cualquier vista de cola visible (dashboard y/o biblioteca). */
+	function updateQueueViews() {
+		if ( document.getElementById( 'ff-dash-body' ) ) { renderDashboardBody(); }
+		if ( document.getElementById( 'ff-media-queue' ) ) { renderMediaQueueBar(); }
 	}
 
 	function tabBtn( id, label ) {
@@ -330,7 +385,8 @@
 				'<td><b>#' + it.id + '</b><br><span class="ff-muted">' + h( it.mime ) + '</span></td>' +
 				'<td>' + badge + ( it.format_to ? '<br><span class="ff-muted" style="font-size:11px">' + h( it.format_to ) + '</span>' : '' ) + '</td>' +
 				'<td>' + ( it.saved_bytes ? '<b style="color:var(--ff-accent)">' + bytes( it.saved_bytes ) + '</b>' : '<span class="ff-muted">—</span>' ) + '</td>' +
-				'<td class="ff-muted" style="max-width:280px">' + ( it.alt ? h( it.alt ) : '<i>sin alt text</i>' ) + '</td>' +
+				'<td class="ff-muted" style="max-width:280px">' + ( it.alt ? h( it.alt ) : '<i>sin alt text</i>' ) +
+					( 'error' === it.ai_status ? ' <span class="ff-badge ff-badge--error">IA ✕</span>' : ( 'done' === it.ai_status ? ' <span class="ff-badge ff-badge--optimized">IA ✓</span>' : ( 'blocked' === it.ai_status ? ' <span class="ff-badge ff-badge--blocked">bloqueado</span>' : '' ) ) ) + '</td>' +
 				'<td>' + actions + '</td>' +
 			'</tr>';
 		} ).join( '' );
@@ -634,11 +690,12 @@
 			Api.get( '/queue/status' ).then( function ( res ) {
 				State.queue = res.queue;
 				if ( State.summary ) { State.summary.library = res.library; State.summary.queue = res.queue; }
-				if ( State.route === 'dashboard' ) { renderDashboardBody(); }
+				updateQueueViews();
 				if ( res.queue.status !== 'running' ) {
 					stopPolling();
-					if ( res.queue.status === 'completed' ) { toast( 'Optimización completada 🎉', 'success' ); }
-					if ( State.route === 'media' ) { loadMedia(); }
+					if ( 'completed' === res.queue.status ) { toast( 'Procesamiento completado 🎉', 'success' ); }
+					if ( 'exhausted' === res.queue.status ) { toast( 'Cola pausada: cuota de créditos agotada.', 'info' ); }
+					if ( 'media' === State.route ) { loadMedia(); }
 				}
 			} );
 		}, 2500 );
@@ -675,19 +732,19 @@
 			case 'start-queue':
 				var mode = actionEl.getAttribute( 'data-mode' ) || 'optimize';
 				Api.post( '/queue/start', { mode: mode } ).then( function ( res ) {
-					State.queue = res.queue; toast( 'Cola iniciada.', 'success' );
-					if ( State.route === 'dashboard' ) { renderDashboardBody(); }
+					State.queue = res.queue; toast( 'Procesamiento iniciado en segundo plano.', 'success' );
+					updateQueueViews();
 					startPolling();
 				} ).catch( function ( er ) { toast( er.message, 'error' ); } );
 				break;
 			case 'pause-queue':
-				Api.post( '/queue/pause' ).then( function ( res ) { State.queue = res.queue; stopPolling(); renderDashboardBody(); toast( 'Cola pausada.', 'info' ); } );
+				Api.post( '/queue/pause' ).then( function ( res ) { State.queue = res.queue; stopPolling(); updateQueueViews(); toast( 'Cola pausada.', 'info' ); } );
 				break;
 			case 'resume-queue':
-				Api.post( '/queue/resume' ).then( function ( res ) { State.queue = res.queue; startPolling(); renderDashboardBody(); toast( 'Cola reanudada.', 'success' ); } );
+				Api.post( '/queue/resume' ).then( function ( res ) { State.queue = res.queue; startPolling(); updateQueueViews(); toast( 'Cola reanudada.', 'success' ); } );
 				break;
 			case 'cancel-queue':
-				Api.post( '/queue/cancel' ).then( function ( res ) { State.queue = res.queue; stopPolling(); renderDashboardBody(); toast( 'Cola detenida.', 'info' ); } );
+				Api.post( '/queue/cancel' ).then( function ( res ) { State.queue = res.queue; stopPolling(); updateQueueViews(); toast( 'Cola detenida.', 'info' ); } );
 				break;
 			case 'media-tab':
 				var statusBtn = e.target.closest( '[data-status]' );
