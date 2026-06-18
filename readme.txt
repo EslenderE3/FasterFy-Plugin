@@ -75,5 +75,9 @@ Todas las rutas requieren capacidad `manage_options` y nonce `wp_rest`.
 
 == Changelog ==
 
+= 1.0.1 =
+* UI: corregidos los interruptores (toggles) que se mostraban rotos por un conflicto de especificidad CSS.
+* UI: el panel ahora es un contenedor flotante con márgenes (ya no queda pegado al borde) y esquinas redondeadas.
+
 = 1.0.0 =
 * Versión inicial: pipeline WebP/AVIF/PNG/SVG, IA multimodal con moderación, colas asíncronas, rollback y panel SPA.
