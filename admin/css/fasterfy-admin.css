@@ -222,12 +222,18 @@
 .ff-cap__dot.off { background: var(--ff-danger); }
 
 /* ----- Toast ----- */
-.ff-toasts { position: fixed; right: 24px; bottom: 24px; display: flex; flex-direction: column; gap: 10px; z-index: 99999; }
-.ff-toast { padding: 13px 18px; border-radius: 12px; background: var(--ff-bg-soft); border: 1px solid var(--ff-border); box-shadow: var(--ff-shadow); font-size: 13px; font-weight: 600; min-width: 240px; animation: fftoast .3s ease; }
-.ff-toast--success { border-left: 3px solid var(--ff-accent); }
-.ff-toast--error { border-left: 3px solid var(--ff-danger); }
-.ff-toast--info { border-left: 3px solid var(--ff-primary); }
-@keyframes fftoast { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+/* ----- Toast (notificaciones, colores explícitos para máxima visibilidad) ----- */
+.ff-toasts { position: fixed; right: 24px; top: 40px; display: flex; flex-direction: column; gap: 12px; z-index: 100000; }
+.ff-toast { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 14px; background: #161d33; color: #f4f7ff; box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5); font-size: 14px; font-weight: 600; min-width: 280px; max-width: 380px; border: 1px solid rgba(255, 255, 255, 0.12); transition: opacity .3s ease, transform .3s ease; animation: fftoast .3s ease; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; }
+.ff-toast__ico { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-weight: 800; color: #fff; flex: none; }
+.ff-toast__msg { flex: 1; line-height: 1.35; }
+.ff-toast--success { border-left: 4px solid #1fd1a3; }
+.ff-toast--success .ff-toast__ico { background: #1fd1a3; color: #04221a; }
+.ff-toast--error { border-left: 4px solid #ff5c7a; }
+.ff-toast--error .ff-toast__ico { background: #ff5c7a; }
+.ff-toast--info { border-left: 4px solid #6d5efc; }
+.ff-toast--info .ff-toast__ico { background: #6d5efc; }
+@keyframes fftoast { from { transform: translateY(-12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 /* ----- Misc ----- */
 .ff-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
@@ -296,3 +302,28 @@
 
 /* Deja espacio al botón de tema para que no tape las acciones del topbar. */
 .ff-topbar { padding-right: 52px; }
+
+
+/* ----- Filtros (buscador + orden) consistentes con el sistema ----- */
+.ff-select {
+	-webkit-appearance: none; appearance: none;
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1l5 5 5-5' stroke='%239aa6c2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+	background-repeat: no-repeat; background-position: right 13px center; padding-right: 34px;
+}
+.ff-toolbar #ff-search,
+.ff-toolbar #ff-orderby {
+	background: var(--ff-surface); border: 1px solid var(--ff-border); border-radius: 12px;
+	height: 42px; color: var(--ff-text); font-weight: 600; font-size: 13px;
+}
+.ff-toolbar #ff-search::placeholder { color: var(--ff-text-dim); font-weight: 500; }
+.ff-toolbar #ff-search:focus,
+.ff-toolbar #ff-orderby:focus { border-color: var(--ff-primary); box-shadow: 0 0 0 3px rgba(109, 94, 252, .2); outline: none; }
+
+/* ----- Selección de imágenes ----- */
+.ff-check { width: 18px; height: 18px; accent-color: var(--ff-primary); cursor: pointer; margin: 0; }
+.ff-selbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; background: var(--ff-surface-2); border: 1px solid var(--ff-primary); border-radius: var(--ff-radius-sm); padding: 12px 16px; margin-bottom: 14px; box-shadow: var(--ff-glow); }
+.ff-selbar b { font-size: 14px; }
+.ff-mcard__thumb { position: relative; }
+.ff-mcard__check { position: absolute; top: 8px; left: 8px; z-index: 2; background: rgba(0, 0, 0, .55); border-radius: 7px; padding: 5px; display: inline-flex; }
+.ff-mcard.is-selected { box-shadow: 0 0 0 2px var(--ff-primary); }
+.ff-table tr.is-selected td { background: rgba(109, 94, 252, .10); }

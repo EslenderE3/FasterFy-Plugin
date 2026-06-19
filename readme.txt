@@ -75,6 +75,13 @@ Todas las rutas requieren capacidad `manage_options` y nonce `wp_rest`.
 
 == Changelog ==
 
+= 1.0.6 =
+* CORRECCIÓN IA: el modo "Optimizar + IA" ahora también genera textos en imágenes ya optimizadas (antes terminaba sin hacer nada si la optimización ya estaba completa).
+* Selección de imágenes: casillas en la galería (lista y cuadrícula) para optimizar, generar IA o revertir SOLO las fotos elegidas.
+* Notificaciones rediseñadas: más visibles, con icono y colores de alto contraste, en la esquina superior derecha.
+* Filtros (buscador y orden) rediseñados para ser consistentes con el estilo del panel.
+* Evita re-consumir cuota de IA en imágenes que ya tienen texto generado.
+
 = 1.0.5 =
 * UX acciones masivas: en modo Lite, un único botón "Procesar toda la biblioteca"; en modo Pro, las 3 acciones (comprimir / textos IA / ambas) con descripción.
 * Lite vs Pro ahora se diferencian de verdad: el modo Lite simplifica el menú y oculta opciones avanzadas (temperatura, renombrado semántico, moderación, throttling, exclusiones).

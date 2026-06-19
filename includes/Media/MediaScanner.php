@@ -239,6 +239,81 @@ final class MediaScanner {
 	}
 
 	/**
+	 * IDs pendientes para el modo combinado ("ambas"): necesitan optimización
+	 * O bien texto de IA. Así el botón "Optimizar + IA" también genera textos
+	 * en imágenes que ya estaban optimizadas.
+	 *
+	 * @param int $limit        Máximo de IDs.
+	 * @param int $max_attempts Máximo de reintentos de IA.
+	 * @return int[]
+	 */
+	public function both_pending_ids( int $limit = 50, int $max_attempts = 3 ): array {
+		global $wpdb;
+
+		$display_in   = $this->display_in_clause();
+		$optim_in     = $this->optimizable_in_clause();
+		$limit        = max( 1, $limit );
+		$max_attempts = max( 1, $max_attempts );
+
+		$sql = $wpdb->prepare(
+			"SELECT p.ID
+			 FROM {$wpdb->posts} p
+			 LEFT JOIN {$wpdb->postmeta} st  ON st.post_id  = p.ID AND st.meta_key  = '_fasterfy_status'
+			 LEFT JOIN {$wpdb->postmeta} ais ON ais.post_id = p.ID AND ais.meta_key = '_fasterfy_ai_status'
+			 LEFT JOIN {$wpdb->postmeta} aia ON aia.post_id = p.ID AND aia.meta_key = '_fasterfy_ai_attempts'
+			 WHERE p.post_type = 'attachment'
+			   AND p.post_mime_type IN ({$display_in})
+			   AND (
+			     ( p.post_mime_type IN ({$optim_in}) AND ( st.meta_value IS NULL OR st.meta_value <> 'optimized' ) )
+			     OR
+			     ( ( ais.meta_value IS NULL OR ais.meta_value NOT IN ( 'done', 'blocked' ) )
+			       AND ( aia.meta_value IS NULL OR CAST( aia.meta_value AS UNSIGNED ) < %d ) )
+			   )
+			 ORDER BY p.ID ASC
+			 LIMIT %d",
+			$max_attempts,
+			$limit
+		);
+
+		$ids = array_map( 'intval', (array) $wpdb->get_col( $sql ) ); // phpcs:ignore
+
+		return array_values( array_filter( $ids, fn( int $id ): bool => ! $this->is_excluded( $id ) ) );
+	}
+
+	/**
+	 * Cuenta los pendientes del modo combinado.
+	 *
+	 * @param int $max_attempts Máximo de reintentos de IA.
+	 * @return int
+	 */
+	public function count_both_pending( int $max_attempts = 3 ): int {
+		global $wpdb;
+
+		$display_in   = $this->display_in_clause();
+		$optim_in     = $this->optimizable_in_clause();
+		$max_attempts = max( 1, $max_attempts );
+
+		$sql = $wpdb->prepare(
+			"SELECT COUNT(DISTINCT p.ID)
+			 FROM {$wpdb->posts} p
+			 LEFT JOIN {$wpdb->postmeta} st  ON st.post_id  = p.ID AND st.meta_key  = '_fasterfy_status'
+			 LEFT JOIN {$wpdb->postmeta} ais ON ais.post_id = p.ID AND ais.meta_key = '_fasterfy_ai_status'
+			 LEFT JOIN {$wpdb->postmeta} aia ON aia.post_id = p.ID AND aia.meta_key = '_fasterfy_ai_attempts'
+			 WHERE p.post_type = 'attachment'
+			   AND p.post_mime_type IN ({$display_in})
+			   AND (
+			     ( p.post_mime_type IN ({$optim_in}) AND ( st.meta_value IS NULL OR st.meta_value <> 'optimized' ) )
+			     OR
+			     ( ( ais.meta_value IS NULL OR ais.meta_value NOT IN ( 'done', 'blocked' ) )
+			       AND ( aia.meta_value IS NULL OR CAST( aia.meta_value AS UNSIGNED ) < %d ) )
+			   )",
+			$max_attempts
+		);
+
+		return (int) $wpdb->get_var( $sql ); // phpcs:ignore
+	}
+
+	/**
 	 * Determina si un adjunto está excluido por la configuración o su tipo.
 	 *
 	 * @param int $attachment_id ID.

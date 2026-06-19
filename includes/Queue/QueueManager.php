@@ -162,9 +162,7 @@ final class QueueManager implements Bootable {
 		$mode      = in_array( $args['mode'] ?? 'optimize', [ 'optimize', 'ai', 'both' ], true ) ? $args['mode'] : 'optimize';
 		$overrides = (array) ( $args['overrides'] ?? [] );
 
-		$total = ( 'ai' === $mode )
-			? $this->scanner->count_ai_pending()
-			: $this->scanner->count_pending();
+		$total = $this->count_for_mode( $mode );
 
 		$state = $this->set_state(
 			[
@@ -319,12 +317,8 @@ final class QueueManager implements Bootable {
 		$mode       = (string) $state['mode'];
 		$overrides  = (array) $state['overrides'];
 
-		// Selecciona el conjunto de pendientes según el modo:
-		// 'ai' usa su propia cola (activos sin texto IA, con reintentos),
-		// 'optimize' y 'both' usan la cola de optimización.
-		$ids = ( 'ai' === $mode )
-			? $this->scanner->ai_pending_ids( $batch_size )
-			: $this->scanner->pending_ids( $batch_size );
+		// Selecciona el conjunto de pendientes según el modo.
+		$ids = $this->pending_for_mode( $mode, $batch_size );
 
 		if ( empty( $ids ) ) {
 			$this->set_state( [ 'status' => 'completed' ] );
@@ -360,9 +354,7 @@ final class QueueManager implements Bootable {
 		);
 
 		// ¿Quedan pendientes? Programa el siguiente lote con cooldown.
-		$remaining = ( 'ai' === $mode )
-			? $this->scanner->count_ai_pending()
-			: $this->scanner->count_pending();
+		$remaining = $this->count_for_mode( $mode );
 
 		if ( $remaining > 0 ) {
 			$cooldown = (int) $this->settings->get( 'throttling.cooldown_seconds', 5 );
@@ -371,6 +363,39 @@ final class QueueManager implements Bootable {
 			$this->set_state( [ 'status' => 'completed' ] );
 			$this->logger->info( __( 'Procesamiento de la biblioteca completado.', 'fasterfy' ), 'queue' );
 		}
+	}
+
+	/**
+	 * Devuelve los IDs pendientes según el modo.
+	 *
+	 * @param string $mode  optimize|ai|both.
+	 * @param int    $limit Límite.
+	 * @return int[]
+	 */
+	private function pending_for_mode( string $mode, int $limit ): array {
+		if ( 'ai' === $mode ) {
+			return $this->scanner->ai_pending_ids( $limit );
+		}
+		if ( 'both' === $mode ) {
+			return $this->scanner->both_pending_ids( $limit );
+		}
+		return $this->scanner->pending_ids( $limit );
+	}
+
+	/**
+	 * Cuenta los pendientes según el modo.
+	 *
+	 * @param string $mode optimize|ai|both.
+	 * @return int
+	 */
+	private function count_for_mode( string $mode ): int {
+		if ( 'ai' === $mode ) {
+			return $this->scanner->count_ai_pending();
+		}
+		if ( 'both' === $mode ) {
+			return $this->scanner->count_both_pending();
+		}
+		return $this->scanner->count_pending();
 	}
 
 	/**
@@ -401,9 +426,7 @@ final class QueueManager implements Bootable {
 			: 3;
 		$limit = max( 1, min( 10, $limit ) );
 
-		$ids = ( 'ai' === $mode )
-			? $this->scanner->ai_pending_ids( $limit )
-			: $this->scanner->pending_ids( $limit );
+		$ids = $this->pending_for_mode( $mode, $limit );
 
 		if ( empty( $ids ) ) {
 			return $this->set_state( [ 'status' => 'completed' ] );
@@ -434,9 +457,7 @@ final class QueueManager implements Bootable {
 			]
 		);
 
-		$remaining = ( 'ai' === $mode )
-			? $this->scanner->count_ai_pending()
-			: $this->scanner->count_pending();
+		$remaining = $this->count_for_mode( $mode );
 
 		if ( $remaining <= 0 ) {
 			return $this->set_state( [ 'status' => 'completed' ] );
@@ -476,10 +497,14 @@ final class QueueManager implements Bootable {
 
 			// 2) IA: reconocimiento + alt text (con moderación).
 			if ( in_array( $mode, [ 'ai', 'both' ], true ) && $this->ai->is_enabled() ) {
-				$ai_result = $this->ai->process_attachment( $attachment_id );
-				if ( $ai_result['success'] ?? false ) {
-					$did_ai = true;
-					$this->consume_credit();
+				$ai_status = (string) get_post_meta( $attachment_id, '_fasterfy_ai_status', true );
+				// Evita reprocesar (y re-cobrar) lo que ya está hecho o bloqueado.
+				if ( ! in_array( $ai_status, [ 'done', 'blocked' ], true ) ) {
+					$ai_result = $this->ai->process_attachment( $attachment_id );
+					if ( $ai_result['success'] ?? false ) {
+						$did_ai = true;
+						$this->consume_credit();
+					}
 				}
 			}
 		} catch ( \Throwable $e ) {

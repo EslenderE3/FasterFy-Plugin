@@ -55,7 +55,7 @@
 		caps: DATA.capabilities || {},
 		summary: null,
 		queue: null,
-		media: { items: [], total: 0, page: 1, status: 'all', search: '', orderby: 'recent', view: ( ( function () { try { return localStorage.getItem( 'fasterfy_media_view' ) || 'list'; } catch ( e ) { return 'list'; } } )() ), loading: false },
+		media: { items: [], total: 0, page: 1, status: 'all', search: '', orderby: 'recent', selected: [], view: ( ( function () { try { return localStorage.getItem( 'fasterfy_media_view' ) || 'list'; } catch ( e ) { return 'list'; } } )() ), loading: false },
 		logs: { items: [], total: 0, page: 1, loading: false },
 		polling: null,
 		driving: false,
@@ -82,20 +82,24 @@
 
 	var toastTimer;
 	function toast( msg, type ) {
+		type = type || 'info';
 		var wrap = document.querySelector( '.ff-toasts' );
 		if ( ! wrap ) {
 			wrap = document.createElement( 'div' );
 			wrap.className = 'ff-toasts';
 			document.body.appendChild( wrap );
 		}
+		var icons = { success: '✓', error: '✕', info: 'ℹ' };
 		var t = document.createElement( 'div' );
-		t.className = 'ff-toast ff-toast--' + ( type || 'info' );
-		t.textContent = msg;
+		t.className = 'ff-toast ff-toast--' + type;
+		t.innerHTML = '<span class="ff-toast__ico">' + ( icons[ type ] || 'ℹ' ) + '</span><span class="ff-toast__msg"></span>';
+		t.querySelector( '.ff-toast__msg' ).textContent = msg;
 		wrap.appendChild( t );
 		setTimeout( function () {
 			t.style.opacity = '0';
+			t.style.transform = 'translateY(-8px)';
 			setTimeout( function () { t.remove(); }, 300 );
-		}, 3200 );
+		}, 4000 );
 	}
 
 	/* ============================================================
@@ -397,6 +401,26 @@
 		return '<button data-status="' + id + '" class="' + ( State.media.status === id ? 'is-active' : '' ) + '">' + label + '</button>';
 	}
 
+	/** ¿Está seleccionado este id? */
+	function isSelected( id ) { return State.media.selected.indexOf( id ) >= 0; }
+
+	/** Casilla de selección de un elemento. */
+	function selCheck( it ) {
+		return '<input type="checkbox" class="ff-check" data-action="select" data-id="' + it.id + '"' + ( isSelected( it.id ) ? ' checked' : '' ) + ' title="Seleccionar">';
+	}
+
+	/** Barra de acciones sobre la selección. */
+	function selectionBar() {
+		var n = State.media.selected.length;
+		if ( ! n ) { return ''; }
+		var aiOn = State.settings.ai && State.settings.ai.enabled;
+		var btns = '<button class="ff-btn ff-btn--sm ff-btn--primary" data-action="sel-optimize">⚡ Optimizar</button>';
+		if ( aiOn ) { btns += '<button class="ff-btn ff-btn--sm ff-btn--accent" data-action="sel-ai">🧠 Generar IA</button>'; }
+		btns += '<button class="ff-btn ff-btn--sm ff-btn--danger" data-action="sel-rollback">↩ Revertir</button>';
+		btns += '<button class="ff-btn ff-btn--sm ff-btn--ghost" data-action="sel-clear">Limpiar</button>';
+		return '<div class="ff-selbar"><b>' + n + ' seleccionada(s)</b><div class="ff-row" style="gap:8px;flex-wrap:wrap">' + btns + '</div></div>';
+	}
+
 	/** Botones de acción de un elemento (compartidos por lista y cuadrícula). */
 	function mediaItemActions( it ) {
 		var a = '<button class="ff-btn ff-btn--sm" data-action="optimize-one" data-id="' + it.id + '">Optimizar</button>';
@@ -419,8 +443,9 @@
 
 	/** Tarjeta de un elemento para la vista en cuadrícula. */
 	function mediaCard( it ) {
-		return '<div class="ff-mcard">' +
-			'<div class="ff-mcard__thumb"><img src="' + ( it.thumb || '' ) + '" alt="" loading="lazy"></div>' +
+		return '<div class="ff-mcard' + ( isSelected( it.id ) ? ' is-selected' : '' ) + '">' +
+			'<div class="ff-mcard__thumb"><label class="ff-mcard__check">' + selCheck( it ) + '</label>' +
+				'<img src="' + ( it.thumb || '' ) + '" alt="" loading="lazy"></div>' +
 			'<div class="ff-mcard__body">' +
 				'<div class="ff-row" style="gap:6px;flex-wrap:wrap">' +
 					'<span class="ff-badge ff-badge--' + it.status + '">' + h( it.status ) + '</span>' + aiBadge( it ) +
@@ -446,17 +471,19 @@
 
 		var pages = Math.ceil( State.media.total / 24 );
 		var pager = pagination( State.media.page, pages, 'media-page' );
+		var bar   = selectionBar();
 
 		// Vista en cuadrícula (ideal para pantallas pequeñas).
 		if ( 'grid' === State.media.view ) {
-			el.innerHTML = '<div class="ff-mediagrid">' + State.media.items.map( mediaCard ).join( '' ) + '</div>' + pager;
+			el.innerHTML = bar + '<div class="ff-mediagrid">' + State.media.items.map( mediaCard ).join( '' ) + '</div>' + pager;
 			return;
 		}
 
 		// Vista en lista (tabla).
 		var rows = State.media.items.map( function ( it ) {
 			var badge = '<span class="ff-badge ff-badge--' + it.status + '">' + h( it.status ) + '</span>';
-			return '<tr data-row="' + it.id + '">' +
+			return '<tr data-row="' + it.id + '"' + ( isSelected( it.id ) ? ' class="is-selected"' : '' ) + '>' +
+				'<td>' + selCheck( it ) + '</td>' +
 				'<td><img class="ff-thumb" src="' + ( it.thumb || '' ) + '" alt="" loading="lazy"></td>' +
 				'<td><b>#' + it.id + '</b><br><span class="ff-muted">' + h( it.mime ) + '</span></td>' +
 				'<td>' + badge + ( it.format_to ? '<br><span class="ff-muted" style="font-size:11px">' + h( it.format_to ) + '</span>' : '' ) + '</td>' +
@@ -466,9 +493,9 @@
 			'</tr>';
 		} ).join( '' );
 
-		el.innerHTML =
+		el.innerHTML = bar +
 			'<table class="ff-table"><thead><tr>' +
-				'<th></th><th>ID</th><th>Estado</th><th>Ahorro</th><th>Alt text (IA)</th><th></th>' +
+				'<th style="width:32px"></th><th></th><th>ID</th><th>Estado</th><th>Ahorro</th><th>Alt text (IA)</th><th></th>' +
 			'</tr></thead><tbody>' + rows + '</tbody></table>' + pager;
 	}
 
@@ -799,6 +826,24 @@
 	/* ============================================================
 	 * Acciones (event delegation)
 	 * ============================================================ */
+	/** Ejecuta una petición por cada id, en secuencia, con aviso de progreso. */
+	function runSequential( ids, makeReq, doneLabel ) {
+		var total = ids.length;
+		var ok = 0;
+		toast( 'Procesando ' + total + ' imagen(es)…', 'info' );
+		function next() {
+			if ( ! ids.length ) {
+				toast( doneLabel + ': ' + ok + '/' + total + ' ✓', 'success' );
+				State.media.selected = [];
+				loadMedia();
+				return;
+			}
+			var id = ids.shift();
+			makeReq( id ).then( function () { ok++; } ).catch( function () {} ).then( function () { next(); } );
+		}
+		next();
+	}
+
 	function onClick( e ) {
 		var nav = e.target.closest( '[data-route]' );
 		if ( nav ) { State.route = nav.getAttribute( 'data-route' ); renderShell(); return; }
@@ -864,6 +909,29 @@
 				break;
 			case 'rollback-one':
 				itemAction( actionEl, '/rollback', { id: +actionEl.getAttribute( 'data-id' ) }, 'Revertido al original' );
+				break;
+			case 'select':
+				var cb = e.target.closest( '[data-action="select"]' );
+				if ( cb ) {
+					var sid = +cb.getAttribute( 'data-id' );
+					var idx = State.media.selected.indexOf( sid );
+					if ( cb.checked && idx < 0 ) { State.media.selected.push( sid ); }
+					else if ( ! cb.checked && idx >= 0 ) { State.media.selected.splice( idx, 1 ); }
+					renderMediaTable();
+				}
+				break;
+			case 'sel-clear':
+				State.media.selected = [];
+				renderMediaTable();
+				break;
+			case 'sel-optimize':
+				runSequential( State.media.selected.slice(), function ( id ) { return Api.post( '/optimize', { id: id, mode: 'optimize' } ); }, 'Optimizadas' );
+				break;
+			case 'sel-ai':
+				runSequential( State.media.selected.slice(), function ( id ) { return Api.post( '/ai/item', { id: id } ); }, 'Textos generados' );
+				break;
+			case 'sel-rollback':
+				runSequential( State.media.selected.slice(), function ( id ) { return Api.post( '/rollback', { id: id } ); }, 'Revertidas' );
 				break;
 			case 'save-settings':
 				saveSettings();
