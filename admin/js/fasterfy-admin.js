@@ -55,7 +55,7 @@
 		caps: DATA.capabilities || {},
 		summary: null,
 		queue: null,
-		media: { items: [], total: 0, page: 1, status: 'all', view: ( ( function () { try { return localStorage.getItem( 'fasterfy_media_view' ) || 'list'; } catch ( e ) { return 'list'; } } )() ), loading: false },
+		media: { items: [], total: 0, page: 1, status: 'all', search: '', orderby: 'recent', view: ( ( function () { try { return localStorage.getItem( 'fasterfy_media_view' ) || 'list'; } catch ( e ) { return 'list'; } } )() ), loading: false },
 		logs: { items: [], total: 0, page: 1, loading: false },
 		polling: null,
 		driving: false,
@@ -114,12 +114,12 @@
 	 * Layout
 	 * ============================================================ */
 	var NAV = [
-		{ id: 'dashboard', label: 'Resumen', icon: 'dashboard' },
-		{ id: 'media', label: 'Biblioteca', icon: 'media' },
-		{ id: 'performance', label: 'Rendimiento', icon: 'perf' },
-		{ id: 'ai', label: 'IA & SEO', icon: 'ai' },
-		{ id: 'settings', label: 'Ajustes', icon: 'settings' },
-		{ id: 'logs', label: 'Registros', icon: 'logs' }
+		{ id: 'dashboard', label: 'Resumen', icon: 'dashboard', lite: true },
+		{ id: 'media', label: 'Biblioteca', icon: 'media', lite: true },
+		{ id: 'performance', label: 'Rendimiento', icon: 'perf', lite: true },
+		{ id: 'ai', label: 'IA & SEO', icon: 'ai', lite: true },
+		{ id: 'settings', label: 'Ajustes', icon: 'settings', lite: true },
+		{ id: 'logs', label: 'Registros', icon: 'logs', lite: false }
 	];
 
 	function renderShell() {
@@ -127,7 +127,11 @@
 		app.removeAttribute( 'data-loading' );
 		app.setAttribute( 'data-theme', State.theme );
 
-		var nav = NAV.map( function ( n ) {
+		// El modo Lite oculta secciones técnicas.
+		var navItems = NAV.filter( function ( n ) { return isPro() || n.lite !== false; } );
+		if ( ! isPro() && State.route === 'logs' ) { State.route = 'dashboard'; }
+
+		var nav = navItems.map( function ( n ) {
 			return '<div class="ff-nav__item' + ( State.route === n.id ? ' is-active' : '' ) + '" data-route="' + n.id + '">' +
 				ICONS[ n.icon ] + '<span>' + n.label + '</span></div>';
 		} ).join( '' );
@@ -143,11 +147,11 @@
 							'<button data-mode="lite" class="' + ( ! isPro() ? 'is-active' : '' ) + '">Lite</button>' +
 							'<button data-mode="pro" class="' + ( isPro() ? 'is-active' : '' ) + '">Pro</button>' +
 						'</div>' +
-						'<button class="ff-btn ff-btn--ghost ff-btn--sm ff-mt" data-action="theme" style="width:100%">' +
-							( State.theme === 'dark' ? '☀ Tema claro' : '🌙 Tema oscuro' ) + '</button>' +
+						'<p class="ff-mode-hint">' + ( isPro() ? 'Modo avanzado: control total.' : 'Modo simple: todo en un clic.' ) + '</p>' +
 					'</div>' +
 				'</aside>' +
 				'<main class="ff-main" id="ff-view"></main>' +
+				'<button class="ff-themebtn" data-action="theme" title="Cambiar tema">' + ( State.theme === 'dark' ? '☀' : '🌙' ) + '</button>' +
 			'</div>';
 
 		renderRoute();
@@ -300,28 +304,58 @@
 					'<button data-view="grid" class="' + ( 'grid' === State.media.view ? 'is-active' : '' ) + '">▦ Cuadrícula</button>' +
 				'</div>' +
 			'</div>' +
+			'<div class="ff-toolbar" style="justify-content:space-between;gap:10px">' +
+				'<input type="search" class="ff-input" id="ff-search" placeholder="🔍 Buscar por nombre…" value="' + h( State.media.search ) + '" style="max-width:320px">' +
+				'<select class="ff-select" id="ff-orderby" style="max-width:220px">' +
+					sortOpt( 'recent', 'Más recientes' ) + sortOpt( 'oldest', 'Más antiguas' ) +
+					sortOpt( 'savings', 'Mayor ahorro' ) + sortOpt( 'title', 'Nombre (A-Z)' ) +
+				'</select>' +
+			'</div>' +
 			'<div class="ff-card"><div id="ff-media-table"></div></div>';
 		loadMedia();
 		refreshQueueStatus();
 	}
 
 	/**
-	 * Tarjeta de acciones masivas (procesamiento de toda la biblioteca por lotes).
+	 * Tarjeta de acciones masivas. En modo Lite muestra un único botón
+	 * "todo en uno"; en modo Pro muestra las 3 acciones con descripción.
 	 */
 	function bulkActionsCard() {
 		var aiOn = State.settings.ai && State.settings.ai.enabled;
-		var buttons = '<button class="ff-btn ff-btn--primary" data-action="start-queue" data-mode="optimize">⚡ Optimizar todo</button>';
-		if ( aiOn ) {
-			buttons += '<button class="ff-btn ff-btn--accent" data-action="start-queue" data-mode="both">✨ Optimizar + IA (todo)</button>';
-			buttons += '<button class="ff-btn" data-action="start-queue" data-mode="ai">🧠 Generar textos IA (todo)</button>';
+		var inner;
+
+		if ( isPro() && aiOn ) {
+			inner = '<div class="ff-bulkgrid">' +
+				bulkOption( 'both', '✨ Optimizar + IA', 'Comprime/convierte y genera los textos en una sola pasada.', 'is-accent' ) +
+				bulkOption( 'optimize', '⚡ Solo comprimir', 'Convierte a WebP/AVIF sin gastar cuota de IA.', 'is-primary' ) +
+				bulkOption( 'ai', '🧠 Solo textos IA', 'Genera alt, título y descripción (con reintentos).', '' ) +
+			'</div>';
+		} else {
+			var mode  = aiOn ? 'both' : 'optimize';
+			var label = aiOn ? '✨ Procesar toda la biblioteca' : '⚡ Optimizar toda la biblioteca';
+			var desc  = aiOn
+				? 'Comprime, convierte a WebP/AVIF y genera los textos con IA, todo automáticamente.'
+				: 'Convierte tus imágenes a WebP/AVIF y las comprime automáticamente.';
+			inner = '<button class="ff-btn ff-btn--primary ff-btn--lg" data-action="start-queue" data-mode="' + mode + '">' + label + '</button>' +
+				'<p class="ff-muted" style="margin:12px 0 0;font-size:13px">' + desc + '</p>';
 		}
+
 		return '<div class="ff-card ff-card--pad-lg" style="margin-bottom:18px">' +
 			'<h3>Acciones masivas</h3>' +
 			'<p class="ff-muted" style="margin:-6px 0 16px;font-size:13px">Procesa toda la biblioteca por lotes. Mantén esta pestaña abierta mientras avanza la barra de progreso.</p>' +
-			'<div class="ff-row" id="ff-bulk-buttons">' + buttons + '</div>' +
+			inner +
 			( aiOn ? '' : '<p class="ff-muted ff-mt" style="font-size:12px">💡 Activa la IA en la pestaña <b>IA & SEO</b> para generar textos en lote.</p>' ) +
 			'<div id="ff-media-queue" class="ff-mt"></div>' +
 		'</div>';
+	}
+
+	function bulkOption( mode, title, desc, cls ) {
+		return '<button class="ff-bulkopt ' + ( cls || '' ) + '" data-action="start-queue" data-mode="' + mode + '">' +
+			'<b>' + title + '</b><span>' + desc + '</span></button>';
+	}
+
+	function sortOpt( v, label ) {
+		return '<option value="' + v + '"' + ( State.media.orderby === v ? ' selected' : '' ) + '>' + label + '</option>';
 	}
 
 	/** Consulta el estado de la cola y pinta la barra de progreso de la Biblioteca. */
@@ -497,6 +531,7 @@
 	function viewAI( view ) {
 		var ai = State.settings.ai || {};
 		var mod = State.settings.moderation || {};
+		var pro = isPro();
 		view.innerHTML = topbar( 'IA & SEO', 'Reconocimiento de imagen, generación de Alt Text y moderación.',
 			'<button class="ff-btn" data-action="ai-test">🔌 Probar conexión</button>' ) +
 			'<div class="ff-card ff-card--pad-lg ff-mt">' +
@@ -508,22 +543,23 @@
 					field( 'ai.api_key', 'API Key' + ( ai.has_api_key ? ' (configurada ✓)' : '' ), passwordInput( 'ai.api_key', '', ai.has_api_key ? '•••••••• (deja vacío para conservar)' : 'sk-…' ) ) +
 					field( 'ai.vision_model', 'Modelo de visión', textInput( 'ai.vision_model', ai.vision_model ) ) +
 					field( 'ai.language', 'Idioma de descripciones', textInput( 'ai.language', ai.language ) ) +
-					rangeField( 'ai.temperature', 'Temperatura (anti-alucinación)', ai.temperature, 0, 1, 0.05 ) +
-					rangeField( 'ai.alt_max_length', 'Longitud máx. del Alt Text', ai.alt_max_length, 20, 300, 5 ) +
+					( pro ? rangeField( 'ai.temperature', 'Temperatura (anti-alucinación)', ai.temperature, 0, 1, 0.05 ) : '' ) +
+					( pro ? rangeField( 'ai.alt_max_length', 'Longitud máx. del Alt Text', ai.alt_max_length, 20, 300, 5 ) : '' ) +
 
 					'<div class="ff-section-title">Generación</div>' +
 					toggleField( 'ai.generate_alt', 'Generar Alt Text', ai.generate_alt, 'Inyecta _wp_attachment_image_alt de forma nativa.' ) +
 					toggleField( 'ai.generate_title', 'Generar título / leyenda', ai.generate_title ) +
 					toggleField( 'ai.hyphenate_title', 'Título con guiones (SEO)', ai.hyphenate_title, 'Separa las palabras del título con guiones. Ej.: Retrato-de-hombre-joven.' ) +
 					toggleField( 'ai.generate_description', 'Generar descripción', ai.generate_description, 'Rellena el campo Descripción del adjunto.' ) +
-					toggleField( 'ai.semantic_rename', 'Renombrado semántico SEO', ai.semantic_rename, 'Renombra el archivo con keywords y actualiza la BD.' ) +
+					( pro ? toggleField( 'ai.semantic_rename', 'Renombrado semántico SEO', ai.semantic_rename, 'Renombra el archivo con keywords y actualiza la BD.' ) : '' ) +
 
-					'<div class="ff-section-title">Moderación de contenido</div>' +
-					toggleField( 'moderation.enabled', 'Moderación NSFW activa', mod.enabled, 'Evalúa cada activo antes de la IA generativa.' ) +
-					toggleField( 'moderation.block_generative', 'Bloquear IA en contenido sensible', mod.block_generative, 'Optimiza técnicamente pero omite la IA generativa.' ) +
-					rangeField( 'moderation.nsfw_threshold', 'Umbral de bloqueo', mod.nsfw_threshold, 0, 1, 0.05 ) +
-					field( 'moderation.fallback_alt', 'Alt text de respaldo', textInput( 'moderation.fallback_alt', mod.fallback_alt ) ) +
+					( pro ? '<div class="ff-section-title">Moderación de contenido (Pro)</div>' : '' ) +
+					( pro ? toggleField( 'moderation.enabled', 'Moderación NSFW activa', mod.enabled, 'Evalúa cada activo antes de la IA generativa.' ) : '' ) +
+					( pro ? toggleField( 'moderation.block_generative', 'Bloquear IA en contenido sensible', mod.block_generative, 'Optimiza técnicamente pero omite la IA generativa.' ) : '' ) +
+					( pro ? rangeField( 'moderation.nsfw_threshold', 'Umbral de bloqueo', mod.nsfw_threshold, 0, 1, 0.05 ) : '' ) +
+					( pro ? field( 'moderation.fallback_alt', 'Alt text de respaldo', textInput( 'moderation.fallback_alt', mod.fallback_alt ) ) : '' ) +
 				'</div>' +
+				( ! pro ? '<p class="ff-muted ff-mt" style="font-size:12px">Cambia a <b>Pro</b> para ajustar temperatura, renombrado semántico y moderación.</p>' : '' ) +
 				'<div class="ff-row ff-mt-lg"><button class="ff-btn ff-btn--primary ff-btn--lg" data-action="save-settings">Guardar cambios</button></div>' +
 			'</div>';
 	}
@@ -702,7 +738,7 @@
 	function loadMedia() {
 		State.media.loading = true;
 		renderMediaTable();
-		return Api.get( '/media?status=' + State.media.status + '&page=' + State.media.page + '&per_page=24' )
+		return Api.get( '/media?status=' + State.media.status + '&page=' + State.media.page + '&per_page=24&orderby=' + encodeURIComponent( State.media.orderby ) + '&search=' + encodeURIComponent( State.media.search ) )
 			.then( function ( res ) {
 				State.media.items = res.items;
 				State.media.total = res.total;
@@ -864,6 +900,19 @@
 			var key = el.getAttribute( 'data-setting' );
 			var label = document.querySelector( '[data-rangeval="' + key + '"]' );
 			if ( label ) { label.textContent = el.value; }
+		}
+		if ( 'ff-search' === el.id ) {
+			clearTimeout( State._searchTimer );
+			State._searchTimer = setTimeout( function () {
+				State.media.search = el.value.trim();
+				State.media.page = 1;
+				loadMedia();
+			}, 450 );
+		}
+		if ( 'ff-orderby' === el.id ) {
+			State.media.orderby = el.value;
+			State.media.page = 1;
+			loadMedia();
 		}
 	}
 

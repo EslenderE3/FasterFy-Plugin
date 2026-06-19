@@ -3,7 +3,7 @@
  * Plugin Name:       FasterFy — AI Media Optimizer
  * Plugin URI:        https://fasterfy.app
  * Description:       Optimización masiva, inteligente y retroactiva de activos visuales: conversión a WebP/AVIF, compresión PNG, sanitización SVG, reconocimiento de imagen e inyección de Alt Text con IA, colas asíncronas no bloqueantes y arquitectura no destructiva (rollback).
- * Version:           1.0.4
+ * Version:           1.0.5
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            FasterFy
@@ -28,7 +28,7 @@ defined( 'ABSPATH' ) || exit;
 | Constantes del plugin
 |--------------------------------------------------------------------------
 */
-define( 'FASTERFY_VERSION', '1.0.4' );
+define( 'FASTERFY_VERSION', '1.0.5' );
 define( 'FASTERFY_FILE', __FILE__ );
 define( 'FASTERFY_BASENAME', plugin_basename( __FILE__ ) );
 define( 'FASTERFY_PATH', plugin_dir_path( __FILE__ ) );

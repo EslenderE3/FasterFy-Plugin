@@ -289,29 +289,50 @@ final class MediaScanner {
 		$page       = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset     = ( $page - 1 ) * $per_page;
 		$status     = (string) ( $args['status'] ?? 'all' );
+		$search     = trim( (string) ( $args['search'] ?? '' ) );
+		$orderby    = (string) ( $args['orderby'] ?? 'recent' );
 		$display_in = $this->display_in_clause();
 
-		$status_join  = "LEFT JOIN {$wpdb->postmeta} m ON m.post_id = p.ID AND m.meta_key = '_fasterfy_status'";
-		$status_where = '';
+		$joins  = "LEFT JOIN {$wpdb->postmeta} m ON m.post_id = p.ID AND m.meta_key = '_fasterfy_status'";
+		$where  = "p.post_type = 'attachment' AND p.post_mime_type IN ({$display_in})";
+		$params = [];
+
 		if ( 'pending' === $status ) {
-			$status_where = "AND ( m.meta_value IS NULL OR m.meta_value <> 'optimized' )";
+			$where .= " AND ( m.meta_value IS NULL OR m.meta_value <> 'optimized' )";
 		} elseif ( 'optimized' === $status ) {
-			$status_where = "AND m.meta_value = 'optimized'";
+			$where .= " AND m.meta_value = 'optimized'";
 		}
 
-		$count_sql = "SELECT COUNT(DISTINCT p.ID) FROM {$wpdb->posts} p {$status_join}
-			WHERE p.post_type = 'attachment' AND p.post_mime_type IN ({$display_in}) {$status_where}";
-		$total     = (int) $wpdb->get_var( $count_sql ); // phpcs:ignore
+		if ( '' !== $search ) {
+			$like     = '%' . $wpdb->esc_like( $search ) . '%';
+			$where   .= ' AND ( p.post_title LIKE %s OR p.guid LIKE %s )';
+			$params[] = $like;
+			$params[] = $like;
+		}
 
-		$list_sql = $wpdb->prepare(
-			"SELECT DISTINCT p.ID, p.post_title, p.post_mime_type
-			 FROM {$wpdb->posts} p {$status_join}
-			 WHERE p.post_type = 'attachment' AND p.post_mime_type IN ({$display_in}) {$status_where}
-			 ORDER BY p.ID DESC LIMIT %d OFFSET %d",
-			$per_page,
-			$offset
-		);
-		$rows     = $wpdb->get_results( $list_sql, ARRAY_A ); // phpcs:ignore
+		// Ordenamiento inteligente.
+		$order_join = '';
+		$order_sql  = 'p.ID DESC';
+		if ( 'savings' === $orderby ) {
+			$order_join = "LEFT JOIN {$wpdb->postmeta} sv ON sv.post_id = p.ID AND sv.meta_key = '_fasterfy_saved_bytes'";
+			$order_sql  = 'CAST( COALESCE( sv.meta_value, 0 ) AS UNSIGNED ) DESC';
+		} elseif ( 'title' === $orderby ) {
+			$order_sql = 'p.post_title ASC';
+		} elseif ( 'oldest' === $orderby ) {
+			$order_sql = 'p.ID ASC';
+		}
+
+		$count_sql = "SELECT COUNT(*) FROM {$wpdb->posts} p {$joins} WHERE {$where}";
+		$total     = (int) ( $params
+			? $wpdb->get_var( $wpdb->prepare( $count_sql, $params ) ) // phpcs:ignore
+			: $wpdb->get_var( $count_sql ) ); // phpcs:ignore
+
+		$list_sql    = "SELECT p.ID, p.post_title, p.post_mime_type
+			 FROM {$wpdb->posts} p {$joins} {$order_join}
+			 WHERE {$where}
+			 ORDER BY {$order_sql} LIMIT %d OFFSET %d";
+		$list_params = array_merge( $params, [ $per_page, $offset ] );
+		$rows        = $wpdb->get_results( $wpdb->prepare( $list_sql, $list_params ), ARRAY_A ); // phpcs:ignore
 
 		$items = [];
 		foreach ( $rows ?: [] as $row ) {

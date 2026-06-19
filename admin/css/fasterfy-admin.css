@@ -263,3 +263,36 @@
 	.ff-mediagrid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
 	.ff-main { padding: 18px 16px 50px; }
 }
+
+
+/* ----- Botón de tema (esquina superior derecha) ----- */
+.ff-themebtn {
+	position: absolute; top: 16px; right: 20px; z-index: 60;
+	width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--ff-border);
+	background: var(--ff-surface-2); color: var(--ff-text); font-size: 18px; cursor: pointer;
+	display: grid; place-items: center; transition: transform .15s ease, background .15s ease; backdrop-filter: blur(8px);
+}
+.ff-themebtn:hover { transform: scale(1.08); background: var(--ff-surface); }
+
+/* ----- Indicador de modo Lite/Pro ----- */
+.ff-mode-hint { font-size: 11px; color: var(--ff-text-dim); text-align: center; margin: 10px 0 0; }
+
+/* ----- Acciones masivas (modo Pro) ----- */
+.ff-bulkgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.ff-bulkopt {
+	text-align: left; padding: 16px; border-radius: var(--ff-radius-sm); border: 1px solid var(--ff-border);
+	background: var(--ff-surface-2); color: var(--ff-text); cursor: pointer; transition: all .15s ease;
+	display: flex; flex-direction: column; gap: 6px;
+}
+.ff-bulkopt:hover { transform: translateY(-2px); box-shadow: var(--ff-glow); }
+.ff-bulkopt b { font-size: 15px; font-weight: 800; }
+.ff-bulkopt span { font-size: 12px; color: var(--ff-text-dim); line-height: 1.4; }
+.ff-bulkopt.is-accent { border-color: rgba(31, 209, 163, 0.4); }
+.ff-bulkopt.is-primary { border-color: rgba(109, 94, 252, 0.4); }
+
+/* La barra de herramientas se adapta en pantallas pequeñas. */
+.ff-toolbar { flex-wrap: wrap; }
+.ff-toolbar #ff-search { flex: 1 1 200px; }
+
+/* Deja espacio al botón de tema para que no tape las acciones del topbar. */
+.ff-topbar { padding-right: 52px; }

@@ -75,6 +75,12 @@ Todas las rutas requieren capacidad `manage_options` y nonce `wp_rest`.
 
 == Changelog ==
 
+= 1.0.5 =
+* UX acciones masivas: en modo Lite, un único botón "Procesar toda la biblioteca"; en modo Pro, las 3 acciones (comprimir / textos IA / ambas) con descripción.
+* Lite vs Pro ahora se diferencian de verdad: el modo Lite simplifica el menú y oculta opciones avanzadas (temperatura, renombrado semántico, moderación, throttling, exclusiones).
+* Biblioteca: buscador por nombre y ordenamiento (recientes, antiguas, mayor ahorro, A-Z) para gestionar bibliotecas grandes sin borrar archivos.
+* Botón de tema claro/oscuro movido a la esquina superior derecha como icono.
+
 = 1.0.4 =
 * IMPORTANTE: las imágenes ya convertidas a WebP/AVIF vuelven a aparecer en la biblioteca del plugin (antes desaparecían y no se les podía aplicar IA ni revertir).
 * Procesamiento masivo fiable: ahora lo conduce el navegador por lotes (run_batch), sin depender de WP-Cron, que en muchos hosts no se ejecuta. Las acciones globales ya funcionan.
