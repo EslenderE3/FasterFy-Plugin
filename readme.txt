@@ -75,6 +75,13 @@ Todas las rutas requieren capacidad `manage_options` y nonce `wp_rest`.
 
 == Changelog ==
 
+= 1.0.10 =
+* CORRECCIÓN PNG: la compresión ahora reduce de verdad. Si comprimir el PNG no ahorra (común en hosts con GD), se convierte a WebP conservando transparencia y se elige el resultado más pequeño.
+* UX: acciones masivas unificadas con las de selección y por imagen (Optimizar / Generar IA / Revertir), para no confundir.
+* Galería: "Seleccionar todo" (marca/desmarca toda la página) para elegir muchas y descartar pocas.
+* "Revertir todo" masivo con confirmación.
+* UI: títulos y números con menos peso y más interlineado en las tarjetas del resumen; desplegable de orden con texto legible al desplegarse.
+
 = 1.0.9 =
 * Resiliencia: bloqueo de concurrencia (lock con auto-expiración) que evita doble procesamiento si hay varias pestañas o WP-Cron activos.
 * Resiliencia: presupuesto de tiempo (~20s) por lote para evitar timeouts en hosts compartidos.

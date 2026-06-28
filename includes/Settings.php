@@ -48,6 +48,8 @@ final class Settings {
 				'avif_quality'       => 60,
 				// Compresión PNG: 'lossless' o 'lossy' (cuantización de color).
 				'png_strategy'       => 'lossy',
+				// Convertir PNG a WebP/AVIF cuando ahorre más espacio (conserva alfa).
+				'png_to_webp'        => true,
 				// Número de colores objetivo para la cuantización PNG (lossy).
 				'png_max_colors'     => 256,
 				// Calidad JPEG de respaldo si no se puede convertir.
@@ -274,6 +276,7 @@ final class Settings {
 		$c                       = $settings['conversion'];
 		$c['target_format']      = in_array( $c['target_format'], [ 'webp', 'avif', 'auto' ], true ) ? $c['target_format'] : 'webp';
 		$c['png_strategy']       = in_array( $c['png_strategy'], [ 'lossless', 'lossy' ], true ) ? $c['png_strategy'] : 'lossy';
+		$c['png_to_webp']        = (bool) ( $c['png_to_webp'] ?? true );
 		$c['webp_quality']       = self::clamp_int( $c['webp_quality'], 1, 100, 80 );
 		$c['avif_quality']       = self::clamp_int( $c['avif_quality'], 1, 100, 60 );
 		$c['jpeg_quality']       = self::clamp_int( $c['jpeg_quality'], 1, 100, 82 );

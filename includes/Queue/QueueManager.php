@@ -160,7 +160,7 @@ final class QueueManager implements Bootable {
 	 * @return array<string, mixed> Estado.
 	 */
 	public function start( array $args = [] ): array {
-		$mode      = in_array( $args['mode'] ?? 'optimize', [ 'optimize', 'ai', 'both' ], true ) ? $args['mode'] : 'optimize';
+		$mode      = in_array( $args['mode'] ?? 'optimize', [ 'optimize', 'ai', 'both', 'rollback' ], true ) ? $args['mode'] : 'optimize';
 		$overrides = (array) ( $args['overrides'] ?? [] );
 
 		$total = $this->count_for_mode( $mode );
@@ -380,6 +380,9 @@ final class QueueManager implements Bootable {
 		if ( 'both' === $mode ) {
 			return $this->scanner->both_pending_ids( $limit );
 		}
+		if ( 'rollback' === $mode ) {
+			return $this->scanner->rollback_pending_ids( $limit );
+		}
 		return $this->scanner->pending_ids( $limit );
 	}
 
@@ -395,6 +398,9 @@ final class QueueManager implements Bootable {
 		}
 		if ( 'both' === $mode ) {
 			return $this->scanner->count_both_pending();
+		}
+		if ( 'rollback' === $mode ) {
+			return $this->scanner->count_rollback_pending();
 		}
 		return $this->scanner->count_pending();
 	}
@@ -517,6 +523,11 @@ final class QueueManager implements Bootable {
 	 * @return string success|skipped|fail
 	 */
 	public function process_item( int $attachment_id, string $mode = 'both', array $overrides = [] ): string {
+		// Reversión en masa: restaura el original desde el respaldo.
+		if ( 'rollback' === $mode ) {
+			return $this->backup->rollback( $attachment_id ) ? 'success' : 'skipped';
+		}
+
 		if ( $this->scanner->is_excluded( $attachment_id ) ) {
 			return 'skipped';
 		}

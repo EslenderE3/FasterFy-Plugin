@@ -314,6 +314,43 @@ final class MediaScanner {
 	}
 
 	/**
+	 * IDs con respaldo disponible (para revertir en masa).
+	 *
+	 * @param int $limit Máximo de IDs.
+	 * @return int[]
+	 */
+	public function rollback_pending_ids( int $limit = 50 ): array {
+		global $wpdb;
+		$display_in = $this->display_in_clause();
+		$limit      = max( 1, $limit );
+		$sql        = $wpdb->prepare(
+			"SELECT p.ID
+			 FROM {$wpdb->posts} p
+			 INNER JOIN {$wpdb->postmeta} b ON b.post_id = p.ID AND b.meta_key = '_fasterfy_backup'
+			 WHERE p.post_type = 'attachment' AND p.post_mime_type IN ({$display_in})
+			 ORDER BY p.ID ASC LIMIT %d",
+			$limit
+		);
+		return array_map( 'intval', (array) $wpdb->get_col( $sql ) ); // phpcs:ignore
+	}
+
+	/**
+	 * Cuenta los adjuntos con respaldo disponible.
+	 *
+	 * @return int
+	 */
+	public function count_rollback_pending(): int {
+		global $wpdb;
+		$display_in = $this->display_in_clause();
+		return (int) $wpdb->get_var(
+			"SELECT COUNT(DISTINCT p.ID)
+			 FROM {$wpdb->posts} p
+			 INNER JOIN {$wpdb->postmeta} b ON b.post_id = p.ID AND b.meta_key = '_fasterfy_backup'
+			 WHERE p.post_type = 'attachment' AND p.post_mime_type IN ({$display_in})"
+		); // phpcs:ignore
+	}
+
+	/**
 	 * Determina si un adjunto está excluido por la configuración o su tipo.
 	 *
 	 * @param int $attachment_id ID.

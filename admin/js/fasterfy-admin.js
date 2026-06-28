@@ -326,36 +326,19 @@
 	 */
 	function bulkActionsCard() {
 		var aiOn = State.settings.ai && State.settings.ai.enabled;
-		var inner;
-
-		if ( isPro() && aiOn ) {
-			inner = '<div class="ff-bulkgrid">' +
-				bulkOption( 'both', '✨ Optimizar + IA', 'Comprime/convierte y genera los textos en una sola pasada.', 'is-accent' ) +
-				bulkOption( 'optimize', '⚡ Solo comprimir', 'Convierte a WebP/AVIF sin gastar cuota de IA.', 'is-primary' ) +
-				bulkOption( 'ai', '🧠 Solo textos IA', 'Genera alt, título y descripción (con reintentos).', '' ) +
-			'</div>';
-		} else {
-			var mode  = aiOn ? 'both' : 'optimize';
-			var label = aiOn ? '✨ Procesar toda la biblioteca' : '⚡ Optimizar toda la biblioteca';
-			var desc  = aiOn
-				? 'Comprime, convierte a WebP/AVIF y genera los textos con IA, todo automáticamente.'
-				: 'Convierte tus imágenes a WebP/AVIF y las comprime automáticamente.';
-			inner = '<button class="ff-btn ff-btn--primary ff-btn--lg" data-action="start-queue" data-mode="' + mode + '">' + label + '</button>' +
-				'<p class="ff-muted" style="margin:12px 0 0;font-size:13px">' + desc + '</p>';
+		var btns = '<button class="ff-btn ff-btn--primary" data-action="start-queue" data-mode="optimize">⚡ Optimizar todo</button>';
+		if ( aiOn ) {
+			btns += '<button class="ff-btn ff-btn--accent" data-action="start-queue" data-mode="ai">🧠 Generar IA en todo</button>';
 		}
+		btns += '<button class="ff-btn ff-btn--danger" data-action="start-queue" data-mode="rollback">↩ Revertir todo</button>';
 
 		return '<div class="ff-card ff-card--pad-lg" style="margin-bottom:18px">' +
 			'<h3>Acciones masivas</h3>' +
-			'<p class="ff-muted" style="margin:-6px 0 16px;font-size:13px">Procesa toda la biblioteca por lotes. Mantén esta pestaña abierta mientras avanza la barra de progreso.</p>' +
-			inner +
-			( aiOn ? '' : '<p class="ff-muted ff-mt" style="font-size:12px">💡 Activa la IA en la pestaña <b>IA & SEO</b> para generar textos en lote.</p>' ) +
+			'<p class="ff-muted" style="margin:-6px 0 16px;font-size:13px">Aplica una acción a toda la biblioteca, por lotes. Mantén esta pestaña abierta mientras avanza la barra de progreso.</p>' +
+			'<div class="ff-row" id="ff-bulk-buttons" style="gap:10px;flex-wrap:wrap">' + btns + '</div>' +
+			( aiOn ? '' : '<p class="ff-muted ff-mt" style="font-size:12px">💡 Activa la IA en la pestaña <b>IA & SEO</b> para generar textos.</p>' ) +
 			'<div id="ff-media-queue" class="ff-mt"></div>' +
 		'</div>';
-	}
-
-	function bulkOption( mode, title, desc, cls ) {
-		return '<button class="ff-bulkopt ' + ( cls || '' ) + '" data-action="start-queue" data-mode="' + mode + '">' +
-			'<b>' + title + '</b><span>' + desc + '</span></button>';
 	}
 
 	function sortOpt( v, label ) {
@@ -409,16 +392,25 @@
 		return '<input type="checkbox" class="ff-check" data-action="select" data-id="' + it.id + '"' + ( isSelected( it.id ) ? ' checked' : '' ) + ' title="Seleccionar">';
 	}
 
-	/** Barra de acciones sobre la selección. */
-	function selectionBar() {
+	/** ¿Están seleccionados todos los de la página actual? */
+	function allPageSelected() {
+		return State.media.items.length > 0 && State.media.items.every( function ( it ) { return isSelected( it.id ); } );
+	}
+
+	/** Barra superior de la galería: "Seleccionar todo" + acciones sobre la selección. */
+	function mediaTopBar() {
 		var n = State.media.selected.length;
-		if ( ! n ) { return ''; }
 		var aiOn = State.settings.ai && State.settings.ai.enabled;
-		var btns = '<button class="ff-btn ff-btn--sm ff-btn--primary" data-action="sel-optimize">⚡ Optimizar</button>';
-		if ( aiOn ) { btns += '<button class="ff-btn ff-btn--sm ff-btn--accent" data-action="sel-ai">🧠 Generar IA</button>'; }
-		btns += '<button class="ff-btn ff-btn--sm ff-btn--danger" data-action="sel-rollback">↩ Revertir</button>';
-		btns += '<button class="ff-btn ff-btn--sm ff-btn--ghost" data-action="sel-clear">Limpiar</button>';
-		return '<div class="ff-selbar"><b>' + n + ' seleccionada(s)</b><div class="ff-row" style="gap:8px;flex-wrap:wrap">' + btns + '</div></div>';
+		var left = '<label class="ff-selall"><input type="checkbox" class="ff-check" data-action="select-all"' + ( allPageSelected() ? ' checked' : '' ) + '> Seleccionar todo' + ( n ? ' · ' + n + ' elegida(s)' : '' ) + '</label>';
+		var right = '';
+		if ( n ) {
+			right = '<button class="ff-btn ff-btn--sm ff-btn--primary" data-action="sel-optimize">⚡ Optimizar</button>';
+			if ( aiOn ) { right += '<button class="ff-btn ff-btn--sm ff-btn--accent" data-action="sel-ai">🧠 Generar IA</button>'; }
+			right += '<button class="ff-btn ff-btn--sm ff-btn--danger" data-action="sel-rollback">↩ Revertir</button>';
+			right += '<button class="ff-btn ff-btn--sm ff-btn--ghost" data-action="sel-clear">Limpiar</button>';
+		}
+		return '<div class="ff-selbar' + ( n ? ' is-active' : '' ) + '"><div class="ff-row" style="gap:10px">' + left + '</div>' +
+			'<div class="ff-row" style="gap:8px;flex-wrap:wrap">' + right + '</div></div>';
 	}
 
 	/** Botones de acción de un elemento (compartidos por lista y cuadrícula). */
@@ -471,7 +463,7 @@
 
 		var pages = Math.ceil( State.media.total / 24 );
 		var pager = pagination( State.media.page, pages, 'media-page' );
-		var bar   = selectionBar();
+		var bar   = mediaTopBar();
 
 		// Vista en cuadrícula (ideal para pantallas pequeñas).
 		if ( 'grid' === State.media.view ) {
@@ -610,6 +602,7 @@
 					'<div class="ff-section-title">Conversión y compresión</div>' +
 					field( 'conversion.target_format', 'Formato objetivo (JPG)', selectInput( 'conversion.target_format', c.target_format, [ [ 'webp', 'WebP' ], [ 'avif', 'AVIF' ], [ 'auto', 'Automático (mejor disponible)' ] ] ) ) +
 					field( 'conversion.png_strategy', 'Estrategia PNG', selectInput( 'conversion.png_strategy', c.png_strategy, [ [ 'lossy', 'Con pérdida (cuantización)' ], [ 'lossless', 'Sin pérdida' ] ] ) ) +
+					toggleField( 'conversion.png_to_webp', 'Convertir PNG a WebP si ahorra más', c.png_to_webp, 'Recomendado: si comprimir el PNG no reduce tamaño, lo convierte a WebP (conserva transparencia).' ) +
 					rangeField( 'conversion.webp_quality', 'Calidad WebP', c.webp_quality, 1, 100, 1 ) +
 					rangeField( 'conversion.avif_quality', 'Calidad AVIF', c.avif_quality, 1, 100, 1 ) +
 					( pro ? rangeField( 'conversion.png_max_colors', 'Colores PNG (lossy)', c.png_max_colors, 2, 256, 2 ) : '' ) +
@@ -869,8 +862,11 @@
 				break;
 			case 'start-queue':
 				var mode = actionEl.getAttribute( 'data-mode' ) || 'optimize';
+				if ( 'rollback' === mode && ! window.confirm( '¿Revertir TODA la biblioteca a las imágenes originales? Esto deshace la optimización en todas las que tengan respaldo.' ) ) {
+					break;
+				}
 				Api.post( '/queue/start', { mode: mode } ).then( function ( res ) {
-					State.queue = res.queue; toast( 'Procesamiento iniciado en segundo plano.', 'success' );
+					State.queue = res.queue; State.driveErrors = 0; toast( 'Procesamiento iniciado en segundo plano.', 'success' );
 					updateQueueViews();
 					startDriving();
 				} ).catch( function ( er ) { toast( er.message, 'error' ); } );
@@ -924,6 +920,18 @@
 			case 'sel-clear':
 				State.media.selected = [];
 				renderMediaTable();
+				break;
+			case 'select-all':
+				var sa = e.target.closest( '[data-action="select-all"]' );
+				if ( sa ) {
+					var pageIds = State.media.items.map( function ( it ) { return it.id; } );
+					if ( sa.checked ) {
+						pageIds.forEach( function ( id ) { if ( State.media.selected.indexOf( id ) < 0 ) { State.media.selected.push( id ); } } );
+					} else {
+						State.media.selected = State.media.selected.filter( function ( id ) { return pageIds.indexOf( id ) < 0; } );
+					}
+					renderMediaTable();
+				}
 				break;
 			case 'sel-optimize':
 				runSequential( State.media.selected.slice(), function ( id ) { return Api.post( '/optimize', { id: id, mode: 'optimize' } ); }, 'Optimizadas' );

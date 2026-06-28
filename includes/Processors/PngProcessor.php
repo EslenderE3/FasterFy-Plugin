@@ -52,66 +52,74 @@ final class PngProcessor implements Processor {
 
 		$conversion    = $options['conversion'] ?? [];
 		$original_size = (int) filesize( $file );
+		$max_width     = (int) ( $conversion['max_width'] ?? 0 );
+		$strip         = (bool) ( $conversion['strip_metadata'] ?? true );
 
-		// Modo 1: convertir PNG a formato de próxima generación.
-		$convert_png = ! empty( $conversion['convert_png'] );
-		if ( $convert_png ) {
+		$candidates = [];
+
+		// Candidato A: compresión PNG conservando transparencia (mismo formato).
+		$strategy   = (string) ( $conversion['png_strategy'] ?? 'lossy' );
+		$max_colors = (int) ( $conversion['png_max_colors'] ?? 256 );
+		$temp_png   = $this->temp_path( $file, 'png' );
+		if ( $this->engine->compress_png( $file, $temp_png, $strategy, $max_colors, $max_width ) && file_exists( $temp_png ) ) {
+			$candidates[] = [
+				'path' => $temp_png,
+				'size' => (int) filesize( $temp_png ),
+				'mime' => 'image/png',
+				'fmt'  => false,
+				'mode' => 'compress',
+			];
+		}
+
+		// Candidato B: conversión a WebP/AVIF (suele ahorrar mucho más, sobre todo
+		// en servidores con GD donde la compresión PNG nativa es limitada).
+		// Conserva el canal alfa (transparencia).
+		$png_to_webp = ! array_key_exists( 'png_to_webp', $conversion ) || ! empty( $conversion['png_to_webp'] );
+		if ( $png_to_webp ) {
 			$target  = $this->resolve_target( (string) ( $conversion['target_format'] ?? 'webp' ) );
 			$quality = 'avif' === $target
 				? (int) ( $conversion['avif_quality'] ?? 60 )
 				: (int) ( $conversion['webp_quality'] ?? 80 );
-			$temp    = $this->temp_path( $file, $target );
-			$ok      = $this->engine->convert( $file, $temp, $target, $quality, (int) ( $conversion['max_width'] ?? 0 ), (bool) ( $conversion['strip_metadata'] ?? true ) );
-
-			if ( $ok && file_exists( $temp ) ) {
-				$output_size = (int) filesize( $temp );
-				if ( $output_size > 0 && $output_size < $original_size ) {
-					return ProcessResult::ok(
-						[
-							'original_path'  => $file,
-							'output_path'    => $temp,
-							'source_mime'    => 'image/png',
-							'output_mime'    => 'image/' . $target,
-							'original_size'  => $original_size,
-							'output_size'    => $output_size,
-							'format_changed' => true,
-							'meta'           => [ 'mode' => 'convert', 'target' => $target ],
-						]
-					);
-				}
-				@unlink( $temp ); // phpcs:ignore
+			$temp_x  = $this->temp_path( $file, $target );
+			if ( $this->engine->convert( $file, $temp_x, $target, $quality, $max_width, $strip ) && file_exists( $temp_x ) ) {
+				$candidates[] = [
+					'path' => $temp_x,
+					'size' => (int) filesize( $temp_x ),
+					'mime' => 'image/' . $target,
+					'fmt'  => true,
+					'mode' => 'convert',
+				];
 			}
-			// Si la conversión falla, caemos a compresión PNG.
 		}
 
-		// Modo 2: compresión PNG conservando transparencia (sin cambio de formato).
-		$strategy   = (string) ( $conversion['png_strategy'] ?? 'lossy' );
-		$max_colors = (int) ( $conversion['png_max_colors'] ?? 256 );
-		$max_width  = (int) ( $conversion['max_width'] ?? 0 );
-
-		$temp = $this->temp_path( $file, 'png' );
-		$ok   = $this->engine->compress_png( $file, $temp, $strategy, $max_colors, $max_width );
-
-		if ( ! $ok || ! file_exists( $temp ) ) {
+		if ( empty( $candidates ) ) {
 			return ProcessResult::fail( __( 'No se pudo comprimir el PNG (motor no disponible).', 'fasterfy' ) );
 		}
 
-		$output_size = (int) filesize( $temp );
-		if ( $output_size >= $original_size && $output_size > 0 ) {
-			@unlink( $temp ); // phpcs:ignore
+		// Elige el resultado más pequeño y descarta el resto.
+		usort( $candidates, static fn( array $a, array $b ): int => $a['size'] <=> $b['size'] );
+		$best = $candidates[0];
+		foreach ( $candidates as $c ) {
+			if ( $c['path'] !== $best['path'] && file_exists( $c['path'] ) ) {
+				@unlink( $c['path'] ); // phpcs:ignore
+			}
+		}
+
+		if ( $best['size'] <= 0 || $best['size'] >= $original_size ) {
+			@unlink( $best['path'] ); // phpcs:ignore
 			return ProcessResult::skip( __( 'El PNG ya estaba optimizado; se conserva el original.', 'fasterfy' ) );
 		}
 
 		return ProcessResult::ok(
 			[
 				'original_path'  => $file,
-				'output_path'    => $temp,
+				'output_path'    => $best['path'],
 				'source_mime'    => 'image/png',
-				'output_mime'    => 'image/png',
+				'output_mime'    => $best['mime'],
 				'original_size'  => $original_size,
-				'output_size'    => $output_size,
-				'format_changed' => false,
-				'meta'           => [ 'mode' => 'compress', 'strategy' => $strategy ],
+				'output_size'    => $best['size'],
+				'format_changed' => $best['fmt'],
+				'meta'           => [ 'mode' => $best['mode'] ],
 			]
 		);
 	}
