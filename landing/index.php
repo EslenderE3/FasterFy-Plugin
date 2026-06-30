@@ -96,9 +96,9 @@ $asset_v = '1.0.0'; // Bump to bust cache on deploy.
 	<main id="main">
 		<!-- ============================ HERO ============================ -->
 		<section class="hero" aria-labelledby="hero-title">
-			<div class="container hero__grid">
+			<div class="container">
 				<div class="hero__copy">
-					<p class="eyebrow">
+					<p class="eyebrow eyebrow--center">
 						<span class="dot" aria-hidden="true"></span>
 						<span data-i18n="hero.badge">Pre-launch · Early access</span>
 					</p>
@@ -167,11 +167,19 @@ $asset_v = '1.0.0'; // Bump to bust cache on deploy.
 					</ul>
 				</div>
 
-				<!-- Hero visual: a results card (lightweight, no heavy image) -->
-				<aside class="hero__visual" aria-label="Optimization results preview">
+				<!-- Hero dashboard showcase: results card + floating accent widgets -->
+				<div class="showcase" aria-label="Optimization results preview">
+					<div class="float-card float-card--a">
+						<span class="float-card__label" data-i18n="float.saved">Saved this week</span>
+						<span class="float-card__value"><em>12.4</em> h</span>
+						<div class="spark" aria-hidden="true">
+							<i style="height:40%"></i><i style="height:65%"></i><i style="height:50%"></i><i style="height:80%"></i><i style="height:100%"></i>
+						</div>
+					</div>
+
 					<div class="result-card">
 						<div class="result-card__head">
-							<img src="assets/img/fasterfy-mark.svg" width="28" height="28" alt="" aria-hidden="true">
+							<img src="assets/img/fasterfy-mark.svg" width="30" height="30" alt="" aria-hidden="true">
 							<span>FasterFy</span>
 							<span class="pill" data-i18n="hero.card.live">Live</span>
 						</div>
@@ -199,7 +207,15 @@ $asset_v = '1.0.0'; // Bump to bust cache on deploy.
 							</div>
 						</div>
 					</div>
-				</aside>
+
+					<div class="float-card float-card--b">
+						<span class="float-card__label" data-i18n="float.joined">Joined the waitlist</span>
+						<span class="float-card__value" data-count="1248">1,248</span>
+						<div class="float-card__avatars" aria-hidden="true">
+							<span>A</span><span>M</span><span>J</span><span>+</span>
+						</div>
+					</div>
+				</div>
 			</div>
 		</section>
 
@@ -293,18 +309,22 @@ $asset_v = '1.0.0'; // Bump to bust cache on deploy.
 		<section class="roi" aria-label="Impact in numbers">
 			<div class="container roi__grid">
 				<div class="roi__item">
+					<span class="roi__arrow" aria-hidden="true">↑ 73%</span>
 					<strong data-count="73">73%</strong>
 					<span data-i18n="roi.1">Lighter images on average</span>
 				</div>
 				<div class="roi__item">
+					<span class="roi__arrow" aria-hidden="true">↑</span>
 					<strong data-i18n="roi.2v">Hours</strong>
 					<span data-i18n="roi.2">Saved every week vs. manual work</span>
 				</div>
 				<div class="roi__item">
+					<span class="roi__arrow" aria-hidden="true">↑ 100%</span>
 					<strong>100%</strong>
 					<span data-i18n="roi.3">Alt text coverage for SEO</span>
 				</div>
 				<div class="roi__item">
+					<span class="roi__arrow" aria-hidden="true">✓</span>
 					<strong data-i18n="roi.4v">Zero</strong>
 					<span data-i18n="roi.4">Originals ever lost</span>
 				</div>
@@ -426,7 +446,7 @@ $asset_v = '1.0.0'; // Bump to bust cache on deploy.
 			<div class="container cta-final__inner">
 				<h2 id="cta-title" data-i18n="cta.title">Be first when FasterFy launches</h2>
 				<p data-i18n="cta.sub">Join the waitlist for early access and founding-member pricing.</p>
-				<a class="btn btn--primary btn--lg" href="#waitlist" data-i18n="cta.btn">Join the waitlist</a>
+				<a class="btn btn--dark btn--lg" href="#waitlist" data-i18n="cta.btn">Join the waitlist</a>
 			</div>
 		</section>
 	</main>
