@@ -75,6 +75,12 @@ Todas las rutas requieren capacidad `manage_options` y nonce `wp_rest`.
 
 == Changelog ==
 
+= 1.0.16 =
+* Biblioteca: vista de detalle por imagen (clic en la miniatura o en "Detalles"): muestra formato, dimensiones, tamaños, ahorro y %, conversión, textos generados (alt/título/leyenda/descripción), respaldo y enlace a WP.
+* Biblioteca: nuevo orden "Tipo de archivo"; corrección del "Seleccionar todo / Limpiar".
+* Resumen: banner con slider de beneficios (rotación automática + puntos de navegación).
+* UI: inputs y selects con bordes redondeados (consistencia con el diseño).
+
 = 1.0.15 =
 * UI: el panel ocupa exactamente 100vh (barra lateral a altura completa, sin recuadro sobrante) y el scroll queda solo dentro del contenido. Se oculta el pie de WP en la página del plugin para eliminar el scroll de página en escritorio.
 * UI: corregido el hover de los botones (ya no se pierde el fondo ni el texto queda ilegible); ahora usa un realce de brillo.

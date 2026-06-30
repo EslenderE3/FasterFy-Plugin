@@ -352,3 +352,50 @@ html.wp-toolbar { background: #141414; }
 
 /* Opciones del desplegable legibles (evita texto sin contraste al desplegar). */
 .ff-select option { color: #1d2327; background: #ffffff; }
+
+
+/* ----- Inputs redondeados (consistencia; gana a estilos de wp-admin) ----- */
+.fasterfy-app .ff-input,
+.fasterfy-app .ff-select,
+.fasterfy-app textarea.ff-input,
+.fasterfy-app input[type="text"],
+.fasterfy-app input[type="password"],
+.fasterfy-app input[type="search"],
+.fasterfy-app input[type="number"] { border-radius: 11px; }
+
+/* ----- Modal / ficha de detalle ----- */
+.ff-modal { position: fixed; inset: 0; z-index: 99990; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.ff-modal__overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, .6); backdrop-filter: blur(3px); }
+.ff-modal__panel { position: relative; z-index: 1; width: min(960px, 96vw); max-height: 90vh; overflow-y: auto; background: var(--ff-bg-soft); border: 1px solid var(--ff-border); border-radius: var(--ff-radius); box-shadow: var(--ff-shadow); padding: 26px; animation: ffpop .2s ease; }
+@keyframes ffpop { from { transform: scale(.97); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.ff-modal__close { position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--ff-border); background: var(--ff-surface-2); color: var(--ff-text); cursor: pointer; font-size: 14px; z-index: 2; }
+.ff-modal__close:hover { filter: brightness(1.2); }
+.ff-detail { display: grid; grid-template-columns: 340px 1fr; gap: 24px; }
+.ff-detail__media img { width: 100%; border-radius: var(--ff-radius-sm); border: 1px solid var(--ff-border); background: var(--ff-surface-2); display: block; }
+.ff-detail__file { margin-top: 8px; font-size: 12px; color: var(--ff-text-dim); word-break: break-all; }
+.ff-dgrid { display: flex; flex-direction: column; gap: 2px; }
+.ff-drow { display: flex; justify-content: space-between; gap: 14px; padding: 8px 0; border-bottom: 1px solid var(--ff-border); font-size: 13px; }
+.ff-drow span { color: var(--ff-text-dim); }
+.ff-dtext { margin-bottom: 12px; }
+.ff-dtext label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--ff-text-dim); font-weight: 700; margin-bottom: 4px; }
+.ff-dtext p { margin: 0; font-size: 13px; line-height: 1.5; background: var(--ff-surface); border: 1px solid var(--ff-border); border-radius: 10px; padding: 9px 12px; }
+@media (max-width: 760px) { .ff-detail { grid-template-columns: 1fr; } }
+
+/* ----- Banner / hero con slider ----- */
+.ff-hero { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: center; margin: 0 0 22px; padding: 22px 26px; border-radius: var(--ff-radius); border: 1px solid var(--ff-border); position: relative; overflow: hidden; background: linear-gradient(120deg, rgba(51, 238, 51, .10), transparent 60%), var(--ff-surface); }
+.ff-hero::after { content: ""; position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(51, 238, 51, .18), transparent 70%); pointer-events: none; }
+.ff-hero__brand { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+.ff-hero__name { font-size: 24px; font-weight: 800; letter-spacing: -.5px; line-height: 1; }
+.ff-hero__name i { color: var(--ff-primary); font-style: italic; }
+.ff-hero__name span { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ff-text-dim); margin-top: 6px; }
+.ff-hero__right { position: relative; z-index: 1; }
+.ff-hero__slides { position: relative; min-height: 64px; }
+.ff-hero__slide { position: absolute; inset: 0; display: flex; align-items: center; gap: 14px; opacity: 0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease; pointer-events: none; }
+.ff-hero__slide.is-active { opacity: 1; transform: none; pointer-events: auto; }
+.ff-hero__ico { font-size: 24px; width: 46px; height: 46px; flex: none; display: grid; place-items: center; border-radius: 12px; background: var(--ff-surface-2); }
+.ff-hero__slide b { display: block; font-size: 16px; font-weight: 800; }
+.ff-hero__slide span { color: var(--ff-text-dim); font-size: 13px; }
+.ff-hero__dots { display: flex; gap: 7px; margin-top: 14px; }
+.ff-hero__dot { width: 8px; height: 8px; border-radius: 999px; border: 0; background: var(--ff-surface-2); cursor: pointer; padding: 0; transition: all .2s; }
+.ff-hero__dot.is-active { width: 22px; background: var(--ff-primary); }
+@media (max-width: 760px) { .ff-hero { grid-template-columns: 1fr; } .ff-hero__slides { min-height: 92px; } }

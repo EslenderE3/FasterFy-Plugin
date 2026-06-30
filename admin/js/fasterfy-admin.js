@@ -200,9 +200,59 @@
 	function viewDashboard( view ) {
 		view.innerHTML = topbar( 'Resumen', 'Estado global de optimización de tu biblioteca de medios.',
 			'<button class="ff-btn ff-btn--primary" data-action="start-queue" data-mode="' + ( State.settings.ai && State.settings.ai.enabled ? 'both' : 'optimize' ) + '">⚡ Optimizar todo</button>' ) +
+			dashboardBanner() +
 			'<div id="ff-dash-body"><div class="ff-empty"><span class="ff-spinner"></span> Cargando datos…</div></div>';
 
+		State.heroIndex = 0;
+		startHero();
 		loadSummary().then( renderDashboardBody );
+	}
+
+	/* Banner/hero con slider de beneficios. */
+	var HERO_SLIDES = [
+		{ icon: '⚡', title: 'Hasta 80% más livianas', text: 'Convierte a WebP/AVIF y comprime automáticamente, sin perder calidad visible.' },
+		{ icon: '🧠', title: 'SEO con Inteligencia Artificial', text: 'Genera alt text, títulos y descripciones para posicionar mejor tus imágenes.' },
+		{ icon: '📦', title: 'Procesamiento masivo', text: 'Optimiza toda tu biblioteca por lotes, en segundo plano, sin bloquear tu sitio.' },
+		{ icon: '↩', title: 'No destructivo', text: 'Guardamos el original: revierte cualquier imagen a su versión inicial con un clic.' }
+	];
+
+	function dashboardBanner() {
+		var slides = HERO_SLIDES.map( function ( s, i ) {
+			return '<div class="ff-hero__slide' + ( 0 === i ? ' is-active' : '' ) + '">' +
+				'<span class="ff-hero__ico">' + s.icon + '</span>' +
+				'<div><b>' + h( s.title ) + '</b><span>' + h( s.text ) + '</span></div></div>';
+		} ).join( '' );
+		var dots = HERO_SLIDES.map( function ( s, i ) {
+			return '<button class="ff-hero__dot' + ( 0 === i ? ' is-active' : '' ) + '" data-action="hero-dot" data-i="' + i + '"></button>';
+		} ).join( '' );
+		return '<div class="ff-hero" id="ff-hero">' +
+			'<div class="ff-hero__left">' +
+				'<div class="ff-hero__brand">' + brandMark( 44 ) + '<div class="ff-hero__name">Faster<i>Fy</i><span>AI Media Optimizer</span></div></div>' +
+			'</div>' +
+			'<div class="ff-hero__right">' +
+				'<div class="ff-hero__slides">' + slides + '</div>' +
+				'<div class="ff-hero__dots">' + dots + '</div>' +
+			'</div>' +
+		'</div>';
+	}
+
+	function heroGo( i ) {
+		var hero = document.getElementById( 'ff-hero' );
+		if ( ! hero ) { return; }
+		var slides = hero.querySelectorAll( '.ff-hero__slide' );
+		var dots = hero.querySelectorAll( '.ff-hero__dot' );
+		if ( ! slides.length ) { return; }
+		State.heroIndex = ( i + slides.length ) % slides.length;
+		slides.forEach( function ( el, n ) { el.classList.toggle( 'is-active', n === State.heroIndex ); } );
+		dots.forEach( function ( el, n ) { el.classList.toggle( 'is-active', n === State.heroIndex ); } );
+	}
+
+	function startHero() {
+		if ( State.heroTimer ) { clearInterval( State.heroTimer ); }
+		State.heroTimer = setInterval( function () {
+			if ( ! document.getElementById( 'ff-hero' ) ) { clearInterval( State.heroTimer ); State.heroTimer = null; return; }
+			heroGo( ( State.heroIndex || 0 ) + 1 );
+		}, 4500 );
 	}
 
 	function renderDashboardBody() {
@@ -322,7 +372,7 @@
 				'<input type="search" class="ff-input" id="ff-search" placeholder="🔍 Buscar por nombre…" value="' + h( State.media.search ) + '" style="max-width:320px">' +
 				'<select class="ff-select" id="ff-orderby" style="max-width:220px">' +
 					sortOpt( 'recent', 'Más recientes' ) + sortOpt( 'oldest', 'Más antiguas' ) +
-					sortOpt( 'savings', 'Mayor ahorro' ) + sortOpt( 'title', 'Nombre (A-Z)' ) +
+					sortOpt( 'savings', 'Mayor ahorro' ) + sortOpt( 'title', 'Nombre (A-Z)' ) + sortOpt( 'type', 'Tipo de archivo' ) +
 				'</select>' +
 			'</div>' +
 			'<div class="ff-card"><div id="ff-media-table"></div></div>';
@@ -425,7 +475,8 @@
 
 	/** Botones de acción de un elemento (compartidos por lista y cuadrícula). */
 	function mediaItemActions( it ) {
-		var a = '<button class="ff-btn ff-btn--sm" data-action="optimize-one" data-id="' + it.id + '">Optimizar</button>';
+		var a = '<button class="ff-btn ff-btn--sm ff-btn--ghost" data-action="detail" data-id="' + it.id + '">Detalles</button>';
+		a += '<button class="ff-btn ff-btn--sm" data-action="optimize-one" data-id="' + it.id + '">Optimizar</button>';
 		if ( State.settings.ai && State.settings.ai.enabled ) {
 			a += '<button class="ff-btn ff-btn--sm" data-action="ai-one" data-id="' + it.id + '">IA</button>';
 		}
@@ -433,6 +484,84 @@
 			a += '<button class="ff-btn ff-btn--sm ff-btn--danger" data-action="rollback-one" data-id="' + it.id + '">Revertir</button>';
 		}
 		return a;
+	}
+
+	/* ============================================================
+	 * Vista de detalle (ficha completa de una imagen)
+	 * ============================================================ */
+	function openDetail( id ) {
+		showDetailOverlay( '<div class="ff-empty"><span class="ff-spinner"></span> Cargando ficha…</div>' );
+		Api.get( '/media/detail?id=' + id ).then( function ( res ) {
+			renderDetailModal( res.detail );
+		} ).catch( function ( e ) { toast( e.message, 'error' ); closeDetail(); } );
+	}
+
+	function showDetailOverlay( inner ) {
+		var ov = document.getElementById( 'ff-detail' );
+		if ( ! ov ) {
+			ov = document.createElement( 'div' );
+			ov.id = 'ff-detail';
+			ov.className = 'ff-modal';
+			document.getElementById( 'fasterfy-app' ).appendChild( ov );
+		}
+		ov.innerHTML = '<div class="ff-modal__overlay" data-action="detail-close"></div><div class="ff-modal__panel">' + inner + '</div>';
+	}
+
+	function closeDetail() {
+		var ov = document.getElementById( 'ff-detail' );
+		if ( ov ) { ov.remove(); }
+	}
+
+	function detailRow( label, value ) {
+		return '<div class="ff-drow"><span>' + h( label ) + '</span><b>' + value + '</b></div>';
+	}
+
+	function renderDetailModal( d ) {
+		var statusBadge = '<span class="ff-badge ff-badge--' + d.status + '">' + h( d.status ) + '</span>';
+		var aiB = aiBadge( d );
+		var conv = ( d.format_from && d.format_to && d.format_from !== d.format_to )
+			? ( h( d.format_from ) + ' → ' + h( d.format_to ) )
+			: h( d.mime );
+		var savings = d.original_size
+			? ( '<b style="color:var(--ff-primary)">' + bytes( d.saved_bytes ) + '</b> (' + d.savings_percent + '%)' )
+			: '<span class="ff-muted">—</span>';
+
+		var info = detailRow( 'Estado', statusBadge + ' ' + ( aiB || '' ) ) +
+			detailRow( 'Formato', conv ) +
+			detailRow( 'Dimensiones', d.width && d.height ? ( d.width + ' × ' + d.height + ' px' ) : '—' ) +
+			detailRow( 'Tamaño actual', d.filesize ? bytes( d.filesize ) : '—' ) +
+			( d.original_size ? detailRow( 'Tamaño original', bytes( d.original_size ) ) : '' ) +
+			( d.optimized_size ? detailRow( 'Tamaño optimizado', bytes( d.optimized_size ) ) : '' ) +
+			detailRow( 'Ahorro', savings ) +
+			( d.renamed_to ? detailRow( 'Renombrado a', h( d.renamed_to ) ) : '' ) +
+			( d.optimized_at ? detailRow( 'Optimizado el', h( d.optimized_at ) + ' UTC' ) : '' ) +
+			detailRow( 'Respaldo', d.has_backup ? 'Sí ✓' : 'No' );
+
+		function textBlock( label, val ) {
+			return '<div class="ff-dtext"><label>' + h( label ) + '</label><p>' + ( val ? h( val ) : '<i class="ff-muted">— vacío —</i>' ) + '</p></div>';
+		}
+
+		var actions = '<button class="ff-btn ff-btn--sm" data-action="optimize-one" data-id="' + d.id + '">⚡ Optimizar</button>';
+		if ( State.settings.ai && State.settings.ai.enabled ) { actions += '<button class="ff-btn ff-btn--sm ff-btn--accent" data-action="ai-one" data-id="' + d.id + '">🧠 Generar IA</button>'; }
+		if ( d.has_backup ) { actions += '<button class="ff-btn ff-btn--sm ff-btn--danger" data-action="rollback-one" data-id="' + d.id + '">↩ Revertir</button>'; }
+		if ( d.edit_link ) { actions += '<a class="ff-btn ff-btn--sm ff-btn--ghost" href="' + d.edit_link + '" target="_blank" rel="noopener">Abrir en WP ↗</a>'; }
+
+		var html =
+			'<button class="ff-modal__close" data-action="detail-close" title="Cerrar">✕</button>' +
+			'<div class="ff-detail">' +
+				'<div class="ff-detail__media"><img src="' + ( d.preview || d.url || '' ) + '" alt=""><div class="ff-detail__file">' + h( d.filename ) + ' · #' + d.id + '</div></div>' +
+				'<div class="ff-detail__info">' +
+					'<h3 style="margin-top:0">' + ( d.title ? h( d.title ) : 'Imagen #' + d.id ) + '</h3>' +
+					'<div class="ff-dgrid">' + info + '</div>' +
+					'<div class="ff-section-title" style="margin:18px 0 10px">Textos (SEO)</div>' +
+					textBlock( 'Texto alternativo (alt)', d.alt ) +
+					textBlock( 'Título', d.title ) +
+					textBlock( 'Leyenda', d.caption ) +
+					textBlock( 'Descripción', d.description ) +
+					'<div class="ff-row ff-mt" style="gap:8px;flex-wrap:wrap">' + actions + '</div>' +
+				'</div>' +
+			'</div>';
+		showDetailOverlay( html );
 	}
 
 	/** Etiqueta del estado de IA. */
@@ -447,7 +576,7 @@
 	function mediaCard( it ) {
 		return '<div class="ff-mcard' + ( isSelected( it.id ) ? ' is-selected' : '' ) + '">' +
 			'<div class="ff-mcard__thumb"><label class="ff-mcard__check">' + selCheck( it ) + '</label>' +
-				'<img src="' + ( it.thumb || '' ) + '" alt="" loading="lazy"></div>' +
+				'<img data-action="detail" data-id="' + it.id + '" style="cursor:pointer" src="' + ( it.thumb || '' ) + '" alt="" loading="lazy"></div>' +
 			'<div class="ff-mcard__body">' +
 				'<div class="ff-row" style="gap:6px;flex-wrap:wrap">' +
 					'<span class="ff-badge ff-badge--' + it.status + '">' + h( it.status ) + '</span>' + aiBadge( it ) +
@@ -486,7 +615,7 @@
 			var badge = '<span class="ff-badge ff-badge--' + it.status + '">' + h( it.status ) + '</span>';
 			return '<tr data-row="' + it.id + '"' + ( isSelected( it.id ) ? ' class="is-selected"' : '' ) + '>' +
 				'<td>' + selCheck( it ) + '</td>' +
-				'<td><img class="ff-thumb" src="' + ( it.thumb || '' ) + '" alt="" loading="lazy"></td>' +
+				'<td><img class="ff-thumb" data-action="detail" data-id="' + it.id + '" style="cursor:pointer" src="' + ( it.thumb || '' ) + '" alt="" loading="lazy"></td>' +
 				'<td><b>#' + it.id + '</b><br><span class="ff-muted">' + h( it.mime ) + '</span></td>' +
 				'<td>' + badge + ( it.format_to ? '<br><span class="ff-muted" style="font-size:11px">' + h( it.format_to ) + '</span>' : '' ) + '</td>' +
 				'<td>' + ( it.saved_bytes ? '<b style="color:var(--ff-accent)">' + bytes( it.saved_bytes ) + '</b>' : '<span class="ff-muted">—</span>' ) + '</td>' +
@@ -931,17 +1060,24 @@
 				State.media.selected = [];
 				renderMediaTable();
 				break;
+			case 'detail':
+				openDetail( +actionEl.getAttribute( 'data-id' ) );
+				break;
+			case 'detail-close':
+				closeDetail();
+				break;
+			case 'hero-dot':
+				heroGo( parseInt( actionEl.getAttribute( 'data-i' ), 10 ) );
+				if ( State.heroTimer ) { clearInterval( State.heroTimer ); startHero(); }
+				break;
 			case 'select-all':
-				var sa = e.target.closest( '[data-action="select-all"]' );
-				if ( sa ) {
-					var pageIds = State.media.items.map( function ( it ) { return it.id; } );
-					if ( sa.checked ) {
-						pageIds.forEach( function ( id ) { if ( State.media.selected.indexOf( id ) < 0 ) { State.media.selected.push( id ); } } );
-					} else {
-						State.media.selected = State.media.selected.filter( function ( id ) { return pageIds.indexOf( id ) < 0; } );
-					}
-					renderMediaTable();
+				if ( allPageSelected() ) {
+					var pidsOff = State.media.items.map( function ( it ) { return it.id; } );
+					State.media.selected = State.media.selected.filter( function ( id ) { return pidsOff.indexOf( id ) < 0; } );
+				} else {
+					State.media.items.forEach( function ( it ) { if ( State.media.selected.indexOf( it.id ) < 0 ) { State.media.selected.push( it.id ); } } );
 				}
+				renderMediaTable();
 				break;
 			case 'sel-optimize':
 				runSequential( State.media.selected.slice(), function ( id ) { return Api.post( '/optimize', { id: id, mode: 'optimize' } ); }, 'Optimizadas' );

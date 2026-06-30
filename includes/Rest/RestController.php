@@ -71,6 +71,7 @@ final class RestController implements Bootable {
 			[ 'settings', WP_REST_Server::READABLE, 'get_settings' ],
 			[ 'settings', WP_REST_Server::EDITABLE, 'update_settings' ],
 			[ 'media', WP_REST_Server::READABLE, 'get_media' ],
+			[ 'media/detail', WP_REST_Server::READABLE, 'get_detail' ],
 			[ 'optimize', WP_REST_Server::CREATABLE, 'optimize_item' ],
 			[ 'rollback', WP_REST_Server::CREATABLE, 'rollback_item' ],
 			[ 'queue/status', WP_REST_Server::READABLE, 'queue_status' ],
@@ -164,6 +165,56 @@ final class RestController implements Bootable {
 			]
 		);
 		return $this->ok( $listing );
+	}
+
+	/**
+	 * Devuelve la ficha completa de un adjunto para la vista de detalle.
+	 *
+	 * @param WP_REST_Request $request Petición.
+	 * @return WP_REST_Response
+	 */
+	public function get_detail( WP_REST_Request $request ): WP_REST_Response {
+		$id = absint( $request->get_param( 'id' ) );
+		if ( ! $id || 'attachment' !== get_post_type( $id ) ) {
+			return $this->error( __( 'Adjunto inválido.', 'fasterfy' ), 400 );
+		}
+
+		$post = get_post( $id );
+		$file = get_attached_file( $id );
+		$meta = wp_get_attachment_metadata( $id );
+		$orig = (int) get_post_meta( $id, '_fasterfy_original_size', true );
+		$opt  = (int) get_post_meta( $id, '_fasterfy_optimized_size', true );
+		$saved = (int) get_post_meta( $id, '_fasterfy_saved_bytes', true );
+		$pct  = $orig > 0 ? round( ( $saved / $orig ) * 100, 1 ) : 0.0;
+
+		$detail = [
+			'id'              => $id,
+			'title'           => $post ? $post->post_title : '',
+			'caption'         => $post ? $post->post_excerpt : '',
+			'description'     => $post ? $post->post_content : '',
+			'alt'             => (string) get_post_meta( $id, '_wp_attachment_image_alt', true ),
+			'mime'            => (string) get_post_mime_type( $id ),
+			'preview'         => wp_get_attachment_image_url( $id, 'large' ) ?: wp_get_attachment_image_url( $id, 'medium' ) ?: wp_get_attachment_image_url( $id, 'full' ),
+			'url'             => wp_get_attachment_url( $id ),
+			'filename'        => $file ? wp_basename( $file ) : '',
+			'width'           => isset( $meta['width'] ) ? (int) $meta['width'] : 0,
+			'height'          => isset( $meta['height'] ) ? (int) $meta['height'] : 0,
+			'filesize'        => ( $file && file_exists( $file ) ) ? (int) filesize( $file ) : 0,
+			'status'          => get_post_meta( $id, '_fasterfy_status', true ) ?: 'pending',
+			'ai_status'       => get_post_meta( $id, '_fasterfy_ai_status', true ) ?: '',
+			'format_from'     => (string) get_post_meta( $id, '_fasterfy_format_from', true ),
+			'format_to'       => (string) get_post_meta( $id, '_fasterfy_format_to', true ),
+			'original_size'   => $orig,
+			'optimized_size'  => $opt,
+			'saved_bytes'     => $saved,
+			'savings_percent' => $pct,
+			'optimized_at'    => (string) get_post_meta( $id, '_fasterfy_optimized_at', true ),
+			'renamed_to'      => (string) get_post_meta( $id, '_fasterfy_renamed_to', true ),
+			'has_backup'      => (bool) get_post_meta( $id, '_fasterfy_backup', true ),
+			'edit_link'       => get_edit_post_link( $id, 'raw' ),
+		];
+
+		return $this->ok( [ 'detail' => $detail ] );
 	}
 
 	/**

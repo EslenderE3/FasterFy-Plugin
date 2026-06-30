@@ -430,6 +430,8 @@ final class MediaScanner {
 			$order_sql  = 'CAST( COALESCE( sv.meta_value, 0 ) AS UNSIGNED ) DESC';
 		} elseif ( 'title' === $orderby ) {
 			$order_sql = 'p.post_title ASC';
+		} elseif ( 'type' === $orderby ) {
+			$order_sql = 'p.post_mime_type ASC, p.post_title ASC';
 		} elseif ( 'oldest' === $orderby ) {
 			$order_sql = 'p.ID ASC';
 		}
