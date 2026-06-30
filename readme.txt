@@ -75,6 +75,9 @@ Todas las rutas requieren capacidad `manage_options` y nonce `wp_rest`.
 
 == Changelog ==
 
+= 1.0.13 =
+* Branding: identidad visual FasterFy aplicada (paleta #1F1F1F / #33EE33 / #ffffff). Nuevo logo (escudo hexagonal con rayo y chispa) en la barra lateral, pantalla de carga e ícono del menú de WordPress; botones, anillo de progreso, toggles, toasts y acentos en verde de marca.
+
 = 1.0.12 =
 * IA en imágenes AVIF ya existentes: el plugin lee el AVIF guardado y crea una copia JPEG al vuelo para el análisis (no requiere re-subir las fotos). Respaldo robusto Imagick/GD para garantizar la conversión AVIF/WebP → JPEG.
 

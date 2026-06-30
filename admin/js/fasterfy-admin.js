@@ -126,6 +126,16 @@
 		{ id: 'logs', label: 'Registros', icon: 'logs', lite: false }
 	];
 
+	/** Escudo de marca FasterFy (hexágono verde + rayo + chispa). */
+	function brandMark( size ) {
+		size = size || 32;
+		return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+			'<path d="M24 2 44 13 44 35 24 46 4 35 4 13Z" fill="#33EE33"/>' +
+			'<path d="M26 10 L15 27 L22 27 L19 39 L33 21 L25 21 Z" fill="#1F1F1F"/>' +
+			'<path d="M33 20.5 L34.5 24.4 L38.4 25.9 L34.5 27.4 L33 31.3 L31.5 27.4 L27.6 25.9 L31.5 24.4 Z" fill="#ffffff"/>' +
+		'</svg>';
+	}
+
 	function renderShell() {
 		var app = document.getElementById( 'fasterfy-app' );
 		app.removeAttribute( 'data-loading' );
@@ -143,7 +153,7 @@
 		app.innerHTML =
 			'<div class="ff-shell">' +
 				'<aside class="ff-sidebar">' +
-					'<div class="ff-brand"><span class="ff-brand__dot"></span>FasterFy</div>' +
+					'<div class="ff-brand">' + brandMark( 32 ) + '<span class="ff-brand__name">Faster<i>Fy</i></span></div>' +
 					'<div class="ff-brand__tag">AI Media Optimizer</div>' +
 					'<nav class="ff-nav">' + nav + '</nav>' +
 					'<div class="ff-sidebar__foot">' +
@@ -222,7 +232,7 @@
 					'<div class="ff-ring">' +
 						'<svg width="130" height="130" viewBox="0 0 130 130">' +
 							'<defs><linearGradient id="ffgrad" x1="0" y1="0" x2="1" y2="1">' +
-								'<stop offset="0%" stop-color="#6d5efc"/><stop offset="100%" stop-color="#1fd1a3"/>' +
+								'<stop offset="0%" stop-color="#33ee33"/><stop offset="100%" stop-color="#18c93a"/>' +
 							'</linearGradient></defs>' +
 							'<circle class="ff-ring__track" cx="65" cy="65" r="54"/>' +
 							'<circle class="ff-ring__bar" cx="65" cy="65" r="54" stroke-dasharray="' + circ + '" stroke-dashoffset="' + dash + '"/>' +
