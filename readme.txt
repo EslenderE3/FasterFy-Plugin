@@ -75,6 +75,9 @@ Todas las rutas requieren capacidad `manage_options` y nonce `wp_rest`.
 
 == Changelog ==
 
+= 1.0.14 =
+* UI: el panel ocupa todo el bloque de pantalla y se elimina el doble scroll (un único scroll de página). Barra lateral fija (sticky) y botón de tema flotante. Ajustes responsive para tablet y móvil.
+
 = 1.0.13 =
 * Branding: identidad visual FasterFy aplicada (paleta #1F1F1F / #33EE33 / #ffffff). Nuevo logo (escudo hexagonal con rayo y chispa) en la barra lateral, pantalla de carga e ícono del menú de WordPress; botones, anillo de progreso, toggles, toasts y acentos en verde de marca.
 
