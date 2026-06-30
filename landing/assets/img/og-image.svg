@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="FasterFy — AI Media Optimizer for WordPress">
+  <defs>
+    <radialGradient id="glow" cx="22%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="#33EE33" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#1F1F1F" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#1F1F1F"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <g transform="translate(120 200)">
+    <g transform="scale(1.7)">
+      <path fill="#33EE33" stroke="#33EE33" stroke-width="9" stroke-linejoin="round"
+            d="M36 18 H84 L108 60 L84 102 H36 L12 60 Z"/>
+      <g fill="#1F1F1F">
+        <path d="M64 30 L46 64 L57 64 L43 94 L77 54 L64 54 L78 30 Z"/>
+        <path d="M60 30 H88 L81 45 H53 Z"/>
+        <path d="M53 53 H75 L69 67 H47 Z"/>
+        <path d="M82 60 C84 70 88 74 98 76 C88 78 84 82 82 92 C80 82 76 78 66 76 C76 74 80 70 82 60 Z"/>
+      </g>
+    </g>
+  </g>
+  <text x="360" y="300" font-family="Arial, Helvetica, sans-serif" font-size="118" font-weight="800" letter-spacing="-2">
+    <tspan fill="#ffffff">Faster</tspan><tspan fill="#33EE33" font-style="italic">Fy</tspan>
+  </text>
+  <text x="362" y="372" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="500" fill="#cfd3cf">AI Media Optimizer for WordPress</text>
+  <text x="362" y="470" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="400" fill="#9aa09a">WebP / AVIF · AI Alt Text &amp; SEO · Bulk optimization · 1-click rollback</text>
+</svg>

@@ -1,0 +1,2 @@
+# Runtime-generated waitlist data & rate-limit state (never commit signups / PII)
+data/

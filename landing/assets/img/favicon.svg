@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="FasterFy">
+  <title>FasterFy</title>
+  <rect width="120" height="120" rx="26" fill="#1F1F1F"/>
+  <g transform="translate(8 8) scale(0.866)">
+    <path fill="#33EE33" stroke="#33EE33" stroke-width="9" stroke-linejoin="round"
+          d="M36 18 H84 L108 60 L84 102 H36 L12 60 Z"/>
+    <g fill="#1F1F1F">
+      <path d="M64 30 L46 64 L57 64 L43 94 L77 54 L64 54 L78 30 Z"/>
+      <path d="M60 30 H88 L81 45 H53 Z"/>
+      <path d="M53 53 H75 L69 67 H47 Z"/>
+      <path d="M82 60 C84 70 88 74 98 76 C88 78 84 82 82 92 C80 82 76 78 66 76 C76 74 80 70 82 60 Z"/>
+    </g>
+  </g>
+</svg>

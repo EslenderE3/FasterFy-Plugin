@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1F1F1F">
+<title>FasterFy — AI Media Optimizer for WordPress | Join the waitlist (Preview)</title>
+<meta name="description" content="FasterFy automates WordPress image optimization: WebP/AVIF conversion, smart compression, AI alt text & SEO, bulk gallery management and 1-click rollback. Static preview.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* FasterFy — Landing styles v2 (dark, modern SaaS) — inlined for standalone preview */
+:root{--ink:#1a1a1a;--ink-900:#121212;--ink-850:#181818;--ink-800:#1f1f1f;--ink-700:#262626;--ink-600:#333;--ink-500:#444;--green-ink:#14241a;--green-ink-2:#0f1c14;--brand:#33ee33;--brand-600:#22c92a;--brand-700:#18a821;--brand-soft:rgba(51,238,51,.12);--brand-glow:rgba(51,238,51,.30);--white:#fff;--text:#f4f6f4;--muted:#aab0aa;--muted-2:#7c827c;--line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.14);--card:#1f1f1f;--radius-sm:14px;--radius:20px;--radius-lg:30px;--radius-xl:40px;--pill:999px;--maxw:1320px;--shadow:0 30px 80px -28px rgba(0,0,0,.7);--shadow-sm:0 14px 40px -18px rgba(0,0,0,.6);--ease:cubic-bezier(.16,1,.3,1);--font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--font-display:"Space Grotesk","Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:110px}
+body{margin:0;font-family:var(--font);background:var(--ink);color:var(--text);line-height:1.65;font-size:18px;font-weight:400;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;background-image:radial-gradient(900px 600px at 80% -5%,rgba(51,238,51,.10),transparent 60%),radial-gradient(700px 500px at -5% 10%,rgba(51,238,51,.06),transparent 55%);background-attachment:fixed}
+img,svg{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+h1,h2,h3{font-family:var(--font-display);line-height:1.08;margin:0;letter-spacing:-.02em;font-weight:600}
+p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+.container{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:24px}
+.container--narrow{max-width:820px}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip-link{position:absolute;left:12px;top:-60px;background:var(--brand);color:var(--ink);padding:10px 16px;border-radius:10px;font-weight:700;z-index:300;transition:top .2s var(--ease)}
+.skip-link:focus{top:12px}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px;border-radius:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;border:1px solid transparent;border-radius:var(--pill);padding:15px 26px;font-size:16px;line-height:1;transition:transform .18s var(--ease),background .18s var(--ease),box-shadow .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease);white-space:nowrap}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.985)}
+.btn--primary{background:var(--brand);color:#0c160c;box-shadow:0 12px 34px -10px var(--brand-glow)}
+.btn--primary:hover{background:#46f246;box-shadow:0 18px 46px -12px var(--brand-glow)}
+.btn--ghost{background:rgba(255,255,255,.03);color:var(--text);border-color:var(--line-2)}
+.btn--ghost:hover{border-color:var(--brand);color:var(--white)}
+.btn--dark{background:#0e0e0e;color:var(--white);border-color:var(--line-2)}
+.btn--dark:hover{border-color:var(--brand)}
+.btn--block{display:flex;width:100%}
+.btn--sm{padding:11px 18px;font-size:14.5px}
+.btn--lg{padding:19px 38px;font-size:18px}
+.btn--lg::after{content:"\2192";margin-left:4px;display:inline-block;transition:transform .22s var(--ease)}
+.btn--lg:hover::after{transform:translateX(5px)}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand);margin:0 0 22px;padding:8px 16px;border:1px solid var(--line-2);border-radius:var(--pill);background:var(--brand-soft)}
+.eyebrow--center{justify-content:center}
+.eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 0 var(--brand-glow);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--brand-glow)}70%{box-shadow:0 0 0 10px rgba(51,238,51,0)}100%{box-shadow:0 0 0 0 rgba(51,238,51,0)}}
+.site-header{position:sticky;top:16px;z-index:100;padding-inline:16px;margin-bottom:-76px}
+.site-header .header__inner{transition:background .25s var(--ease),border-color .25s var(--ease),box-shadow .25s var(--ease)}
+.site-header.is-scrolled .header__inner{background:rgba(18,18,18,.92);border-color:rgba(255,255,255,.2);box-shadow:0 12px 34px -12px rgba(0,0,0,.75)}
+.header__inner{display:flex;align-items:center;justify-content:space-between;gap:16px;height:68px;max-width:var(--maxw);margin-inline:auto;padding:0 14px 0 22px;background:rgba(24,24,24,.72);backdrop-filter:saturate(160%) blur(16px);border:1px solid var(--line-2);border-radius:var(--pill);box-shadow:var(--shadow-sm)}
+.brand{display:inline-flex;align-items:center;gap:11px}
+.brand__mark{width:36px;height:36px}
+.brand__word{font-family:var(--font-display);font-weight:700;font-size:22px;letter-spacing:-.02em;color:var(--white)}
+.brand__word em{color:var(--brand);font-style:italic}
+.nav{display:none;gap:6px}
+.nav a{position:relative;color:var(--muted);font-weight:600;font-size:15px;padding:9px 15px;border-radius:var(--pill);transition:color .15s var(--ease),background .15s var(--ease)}
+.nav a:hover{color:var(--white);background:rgba(255,255,255,.05)}
+.nav a.is-active{color:var(--white)}
+.nav a::after{content:"";position:absolute;left:15px;right:15px;bottom:5px;height:2px;background:var(--brand);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .28s var(--ease)}
+.nav a:hover::after,.nav a.is-active::after{transform:scaleX(1)}
+.header__actions{display:flex;align-items:center;gap:10px}
+.lang-switch{display:inline-flex;border:1px solid var(--line-2);border-radius:var(--pill);overflow:hidden;padding:3px;gap:2px}
+.lang-btn{background:transparent;color:var(--muted);border:0;padding:7px 12px;font-size:13px;font-weight:700;border-radius:var(--pill);transition:background .15s var(--ease),color .15s var(--ease)}
+.lang-btn.is-active{background:var(--brand);color:var(--ink)}
+.header__actions .btn--sm{display:none}
+.hero{position:relative;padding:150px 0 70px;text-align:center;overflow:hidden}
+.hero__copy{max-width:920px;margin-inline:auto}
+h1#hero-title{font-size:clamp(2.6rem,7vw,5rem);color:var(--white);margin-bottom:24px;font-weight:600;letter-spacing:-.03em}
+h1#hero-title .hl{color:var(--brand)}
+.hero__lead{font-size:clamp(1.1rem,2.4vw,1.4rem);color:var(--muted);margin:0 auto 36px;max-width:660px}
+.hero .waitlist{max-width:600px;margin-inline:auto}
+.hero__trust{display:flex;flex-wrap:wrap;gap:14px 26px;margin-top:30px;justify-content:center}
+.hero__trust li{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14.5px;font-weight:600}
+.hero__trust li::before{content:"✓";color:var(--brand);font-weight:800}
+.waitlist{background:rgba(31,31,31,.7);border:1px solid var(--line-2);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow-sm);text-align:left;backdrop-filter:blur(8px)}
+.waitlist__row{display:grid;gap:10px}
+.field{display:flex;flex-direction:column}
+.field input[type="email"]{width:100%;background:var(--ink-900);border:1px solid var(--ink-600);border-radius:var(--pill);color:var(--white);padding:16px 22px;font-size:16px;transition:border-color .15s var(--ease),box-shadow .15s var(--ease)}
+.field input::placeholder{color:var(--muted-2)}
+.field input:focus-visible{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-glow)}
+.field input[aria-invalid="true"]{border-color:#ff5a5a}
+.hp-field{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
+.consent{display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding-inline:8px;font-size:13.5px;color:var(--muted)}
+.consent input{margin-top:3px;width:17px;height:17px;accent-color:var(--brand);flex:none}
+.form-note{margin-top:10px;padding-inline:8px;font-size:13px;color:var(--muted-2)}
+.field-error{color:#ff7a7a;font-size:13.5px;margin-top:8px;padding-inline:8px;font-weight:600}
+.form-feedback{margin-top:12px;padding:13px 16px;border-radius:var(--radius-sm);font-size:14.5px;font-weight:600}
+.form-feedback.is-success{background:var(--brand-soft);border:1px solid var(--brand);color:#c9ffc9}
+.form-feedback.is-error{background:rgba(255,90,90,.1);border:1px solid #ff5a5a;color:#ffc9c9}
+.showcase{position:relative;max-width:980px;margin:66px auto 0}
+.result-card{background:linear-gradient(165deg,#232323,var(--ink-900));border:1px solid var(--line-2);border-radius:var(--radius-lg);padding:30px;box-shadow:var(--shadow);text-align:left;position:relative;z-index:2}
+.result-card__head{display:flex;align-items:center;gap:11px;font-weight:700;color:var(--white);margin-bottom:26px;font-size:1.05rem}
+.result-card__head .pill{margin-left:auto;display:inline-flex;align-items:center;gap:7px;background:var(--brand-soft);color:var(--brand);font-size:12px;padding:6px 13px;border-radius:var(--pill);font-weight:700}
+.result-card__head .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--brand)}
+.stat{display:flex;flex-direction:column}
+.stat__value{font-family:var(--font-display);font-size:clamp(3rem,8vw,4.4rem);font-weight:600;color:var(--brand);letter-spacing:-.03em;line-height:1}
+.stat__label{color:var(--muted);font-size:15px;margin-top:8px}
+.bar{height:12px;background:var(--ink-700);border-radius:var(--pill);overflow:hidden;margin:18px 0 26px}
+.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--brand-700),var(--brand));border-radius:var(--pill);transform-origin:left}
+.bar.is-filled span{animation:ff-bar-fill 1.4s var(--ease)}
+@keyframes ff-bar-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.result-card__grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.result-card__grid>div{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px 18px}
+.result-card__grid strong{display:block;font-family:var(--font-display);color:var(--white);font-size:1.5rem;font-weight:600;letter-spacing:-.01em}
+.result-card__grid span{color:var(--muted-2);font-size:13px}
+.float-card{display:none;position:absolute;z-index:3;background:var(--green-ink);border:1px solid rgba(51,238,51,.3);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);text-align:left;min-width:180px}
+.float-card__label{color:var(--muted);font-size:12.5px;font-weight:600}
+.float-card__value{font-family:var(--font-display);color:var(--white);font-size:1.6rem;font-weight:600;letter-spacing:-.01em;margin-top:4px}
+.float-card__value em{color:var(--brand);font-style:normal}
+.float-card--a{top:-34px;right:-42px;animation:ff-float 6s ease-in-out infinite}
+.float-card--b{bottom:-30px;left:-46px;animation:ff-float 7.5s ease-in-out infinite .6s}
+@keyframes ff-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
+.float-card__avatars{display:flex;margin-top:8px}
+.float-card__avatars span{width:30px;height:30px;border-radius:50%;border:2px solid var(--green-ink);margin-left:-8px;background:linear-gradient(135deg,var(--brand),var(--brand-700));display:grid;place-items:center;font-size:12px;font-weight:800;color:#0c160c}
+.float-card__avatars span:first-child{margin-left:0}
+.spark{display:flex;align-items:flex-end;gap:4px;height:34px;margin-top:10px}
+.spark i{width:8px;background:var(--brand);border-radius:3px;opacity:.85}
+.float-card--a .spark i{transform-origin:bottom;animation:ff-spark 1s var(--ease) both}
+.float-card--a .spark i:nth-child(2){animation-delay:.08s}
+.float-card--a .spark i:nth-child(3){animation-delay:.16s}
+.float-card--a .spark i:nth-child(4){animation-delay:.24s}
+.float-card--a .spark i:nth-child(5){animation-delay:.32s}
+@keyframes ff-spark{from{transform:scaleY(.2)}to{transform:scaleY(1)}}
+.strip{border-block:1px solid var(--line);background:rgba(18,18,18,.6)}
+.strip__inner{display:flex;flex-wrap:wrap;gap:16px 34px;justify-content:center;padding:26px 24px}
+.strip__inner span{color:var(--muted);font-weight:700;font-size:15px;letter-spacing:.01em;position:relative;padding-left:24px}
+.strip__inner span::before{content:"";position:absolute;left:0;top:50%;width:13px;height:13px;transform:translateY(-50%);background:var(--brand);border-radius:4px}
+.section{padding:110px 0}
+.section--alt{background:var(--ink-900)}
+.section__head{text-align:center;max-width:760px;margin:0 auto 64px}
+.section__head h2{font-size:clamp(2.1rem,5.5vw,3.4rem);color:var(--white)}
+.section__sub{color:var(--muted);margin-top:18px;font-size:1.18rem}
+.cards{display:grid;gap:22px;grid-template-columns:1fr}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:34px 30px;transition:transform .28s var(--ease),border-color .28s var(--ease),background .28s var(--ease)}
+.card:hover{transform:translateY(-6px);border-color:rgba(51,238,51,.45);background:linear-gradient(180deg,#232323,var(--card))}
+.card__icon{width:60px;height:60px;display:grid;place-items:center;font-size:28px;background:var(--brand-soft);border:1px solid var(--line-2);border-radius:18px;margin-bottom:22px;transition:transform .3s var(--ease),background .3s var(--ease),border-color .3s var(--ease)}
+.card:hover .card__icon{transform:translateY(-3px) scale(1.06) rotate(-4deg);background:rgba(51,238,51,.2);border-color:rgba(51,238,51,.5)}
+.card h3{font-size:1.4rem;color:var(--white);margin-bottom:12px}
+.card p{color:var(--muted);font-size:16px}
+.steps{display:grid;gap:24px;grid-template-columns:1fr}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:36px 30px;position:relative}
+.step__num{display:grid;place-items:center;width:52px;height:52px;background:var(--brand);color:var(--ink);font-weight:800;border-radius:16px;margin-bottom:22px;font-size:1.3rem;transition:transform .3s var(--ease)}
+.step:hover .step__num{transform:scale(1.08) rotate(-3deg)}
+.step h3{font-size:1.35rem;color:var(--white);margin-bottom:12px}
+.step p{color:var(--muted);font-size:16px}
+.roi{background:radial-gradient(closest-side at 50% 0,var(--brand-glow),transparent 70%),var(--ink-900);border-block:1px solid var(--line);padding:90px 0}
+.roi__grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.roi__item{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;text-align:left}
+.roi__arrow{display:inline-flex;align-items:center;gap:4px;background:var(--brand-soft);color:var(--brand);font-weight:800;font-size:13px;padding:5px 11px;border-radius:var(--pill);margin-bottom:16px}
+.roi__item strong{display:block;font-family:var(--font-display);font-size:clamp(2.2rem,6vw,3rem);color:var(--white);font-weight:600;letter-spacing:-.03em;line-height:1}
+.roi__item span{color:var(--muted);font-size:14.5px;display:block;margin-top:10px}
+.billing-toggle{display:inline-flex;margin-top:28px;border:1px solid var(--line-2);border-radius:var(--pill);padding:5px;gap:4px}
+.billing-btn{border:0;background:transparent;color:var(--muted);padding:11px 22px;border-radius:var(--pill);font-weight:700;font-size:14.5px;transition:background .15s var(--ease),color .15s var(--ease)}
+.billing-btn.is-active{background:var(--brand);color:var(--ink)}
+.plans{display:grid;gap:24px;grid-template-columns:1fr;align-items:start}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:38px 32px;position:relative}
+.plan--featured{background:linear-gradient(180deg,var(--green-ink),var(--green-ink-2));border-color:var(--brand);box-shadow:0 0 0 1px var(--brand),0 30px 70px -26px var(--brand-glow)}
+.plan__badge{position:absolute;top:-15px;left:50%;transform:translateX(-50%);background:var(--brand);color:var(--ink);font-size:12px;font-weight:800;padding:7px 16px;border-radius:var(--pill);letter-spacing:.04em;white-space:nowrap}
+.plan__name{font-size:1.5rem;color:var(--white)}
+.plan__desc{color:var(--muted);font-size:15px;margin:10px 0 22px;min-height:44px}
+.plan__price{display:flex;align-items:baseline;gap:8px;margin-bottom:24px}
+.plan__amount{font-family:var(--font-display);font-size:3.2rem;font-weight:600;color:var(--white);letter-spacing:-.03em}
+.plan__period{color:var(--muted-2);font-size:15px}
+.plan__features{margin-top:26px;display:grid;gap:14px}
+.plan__features li{position:relative;padding-left:30px;color:var(--muted);font-size:15px}
+.plan__features li::before{content:"✓";position:absolute;left:0;top:0;color:var(--brand);font-weight:800}
+.pricing__foot{text-align:center;color:var(--muted-2);font-size:13.5px;margin-top:34px}
+.faq{display:grid;gap:14px}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:6px 26px;transition:border-color .2s var(--ease)}
+.faq details[open]{border-color:rgba(51,238,51,.45)}
+.faq summary{list-style:none;cursor:pointer;padding:22px 36px 22px 0;font-weight:700;color:var(--white);position:relative;font-size:1.15rem;transition:color .15s var(--ease)}
+.faq summary:hover{color:var(--brand)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:0;top:50%;transform:translateY(-50%);color:var(--brand);font-size:1.7rem;font-weight:400;transition:transform .2s var(--ease)}
+.faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+.faq p{color:var(--muted);padding:0 0 22px;font-size:16px}
+.cta-final{padding:110px 0}
+.cta-final__inner{max-width:var(--maxw);margin:0 auto;background:linear-gradient(135deg,#45f046,var(--brand-600));border-radius:var(--radius-xl);padding:72px 40px;text-align:center;position:relative;overflow:hidden}
+.cta-final__inner::before{content:"";position:absolute;inset:auto -10% -60% -10%;height:300px;background:radial-gradient(closest-side,rgba(255,255,255,.35),transparent 70%);pointer-events:none}
+.cta-final h2{font-size:clamp(2.1rem,5.5vw,3.4rem);color:#0c160c;margin-bottom:16px;position:relative}
+.cta-final p{color:#103314;margin:0 auto 32px;font-size:1.2rem;max-width:540px;font-weight:500;position:relative}
+.cta-final .btn--dark{position:relative}
+.site-footer{border-top:1px solid var(--line);background:var(--ink-900);padding:60px 0 34px}
+.footer__inner{display:grid;gap:30px;margin-bottom:34px}
+.footer__brand{display:grid;gap:10px;max-width:320px}
+.footer__brand .brand__word{font-size:22px}
+.footer__brand p{color:var(--muted-2);font-size:15px}
+.footer__links{display:flex;flex-wrap:wrap;gap:22px}
+.footer__links a{color:var(--muted);font-weight:600;font-size:15px}
+.footer__links a:hover{color:var(--brand)}
+.footer__bottom{border-top:1px solid var(--line);padding-top:24px;color:var(--muted-2);font-size:13.5px}
+.preview-ribbon{background:var(--brand);color:var(--ink);text-align:center;font-weight:700;font-size:13px;padding:9px 16px}
+.reveal-init{opacity:0;transform:translateY(26px);transition:opacity .75s var(--ease),transform .75s var(--ease);will-change:opacity,transform}
+.reveal-init.is-visible{opacity:1;transform:none}
+.stagger-init>*{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.stagger-init.is-visible>*{opacity:1;transform:none}
+.stagger-init.is-visible>*:nth-child(1){transition-delay:.04s}
+.stagger-init.is-visible>*:nth-child(2){transition-delay:.11s}
+.stagger-init.is-visible>*:nth-child(3){transition-delay:.18s}
+.stagger-init.is-visible>*:nth-child(4){transition-delay:.25s}
+.stagger-init.is-visible>*:nth-child(5){transition-delay:.32s}
+.stagger-init.is-visible>*:nth-child(6){transition-delay:.39s}
+@media (prefers-reduced-motion:reduce){.float-card--a,.float-card--b{animation:none}.bar.is-filled span,.float-card--a .spark i{animation:none}.reveal-init,.stagger-init>*{opacity:1!important;transform:none!important;transition:none}.btn--lg:hover::after{transform:none}}
+@media (min-width:600px){.waitlist__row{grid-template-columns:1fr auto}.cards{grid-template-columns:1fr 1fr}.roi__grid{grid-template-columns:repeat(4,1fr)}}
+@media (min-width:920px){.nav{display:flex}.header__actions .btn--sm{display:inline-flex}.cards{grid-template-columns:repeat(3,1fr)}.steps{grid-template-columns:repeat(3,1fr)}.plans{grid-template-columns:repeat(3,1fr)}.plan--featured{transform:translateY(-16px)}.float-card{display:block}.footer__inner{grid-template-columns:1fr auto;align-items:center}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#waitlist" data-i18n="skip">Skip to the waitlist</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+	<symbol id="ff-mark" viewBox="0 0 120 120">
+		<path fill="#33EE33" stroke="#33EE33" stroke-width="9" stroke-linejoin="round" d="M36 18 H84 L108 60 L84 102 H36 L12 60 Z"/>
+		<g fill="#1F1F1F">
+			<path d="M64 30 L46 64 L57 64 L43 94 L77 54 L64 54 L78 30 Z"/>
+			<path d="M60 30 H88 L81 45 H53 Z"/>
+			<path d="M53 53 H75 L69 67 H47 Z"/>
+			<path d="M82 60 C84 70 88 74 98 76 C88 78 84 82 82 92 C80 82 76 78 66 76 C76 74 80 70 82 60 Z"/>
+		</g>
+	</symbol>
+</svg>
+
+<div class="preview-ribbon" data-i18n="preview.ribbon">Static preview — the form is simulated (no data is sent or stored).</div>
+
+<header class="site-header" id="top">
+	<div class="header__inner">
+		<a class="brand" href="#top" aria-label="FasterFy home">
+			<svg class="brand__mark" aria-hidden="true"><use href="#ff-mark"/></svg>
+			<span class="brand__word">Faster<em>Fy</em></span>
+		</a>
+		<nav class="nav" aria-label="Primary">
+			<a href="#features" data-i18n="nav.features">Features</a>
+			<a href="#how" data-i18n="nav.how">How it works</a>
+			<a href="#pricing" data-i18n="nav.pricing">Pricing</a>
+			<a href="#faq" data-i18n="nav.faq">FAQ</a>
+		</nav>
+		<div class="header__actions">
+			<div class="lang-switch" role="group" aria-label="Language">
+				<button type="button" class="lang-btn is-active" data-lang="en" aria-pressed="true">EN</button>
+				<button type="button" class="lang-btn" data-lang="es" aria-pressed="false">ES</button>
+			</div>
+			<a class="btn btn--primary btn--sm" href="#waitlist" data-i18n="nav.cta">Join waitlist</a>
+		</div>
+	</div>
+</header>
+
+<main id="main">
+	<section class="hero" aria-labelledby="hero-title">
+		<div class="container">
+			<div class="hero__copy">
+				<p class="eyebrow eyebrow--center"><span class="dot" aria-hidden="true"></span><span data-i18n="hero.badge">Pre-launch · Early access</span></p>
+				<h1 id="hero-title" data-i18n="hero.title">Stop optimizing WordPress images by hand.</h1>
+				<p class="hero__lead" data-i18n="hero.lead">FasterFy converts, compresses and writes SEO alt text for your entire media library automatically — so your site loads faster, ranks higher and you get hours back every week.</p>
+				<form id="waitlist-form" class="waitlist" novalidate>
+					<div class="hp-field" aria-hidden="true">
+						<label for="company_website">Company website</label>
+						<input type="text" id="company_website" name="company_website" tabindex="-1" autocomplete="off">
+					</div>
+					<div class="waitlist__row">
+						<div class="field">
+							<label class="sr-only" for="email" data-i18n="form.email.label">Work email</label>
+							<input type="email" id="email" name="email" required autocomplete="email" inputmode="email" placeholder="you@yourcompany.com" data-i18n-attr="placeholder" data-i18n="form.email.placeholder" aria-describedby="email-error form-note">
+						</div>
+						<button type="submit" class="btn btn--primary" data-i18n="form.submit">Get early access</button>
+					</div>
+					<p class="field-error" id="email-error" role="alert" hidden></p>
+					<label class="consent">
+						<input type="checkbox" name="consent" id="consent" value="1" required>
+						<span data-i18n="form.consent">I agree to receive launch updates. No spam — unsubscribe anytime.</span>
+					</label>
+					<p class="form-note" id="form-note" data-i18n="form.note">Join the waitlist and lock in a founding-member discount.</p>
+					<div class="form-feedback" id="form-feedback" role="status" aria-live="polite" hidden></div>
+				</form>
+				<ul class="hero__trust" aria-label="Why teams trust FasterFy">
+					<li data-i18n="hero.trust.1">No credit card</li>
+					<li data-i18n="hero.trust.2">Non-destructive · 1-click rollback</li>
+					<li data-i18n="hero.trust.3">Built for WordPress</li>
+				</ul>
+			</div>
+
+			<div class="showcase" aria-label="Optimization results preview">
+				<div class="float-card float-card--a">
+					<span class="float-card__label" data-i18n="float.saved">Saved this week</span>
+					<span class="float-card__value"><em>12.4</em> h</span>
+					<div class="spark" aria-hidden="true"><i style="height:40%"></i><i style="height:65%"></i><i style="height:50%"></i><i style="height:80%"></i><i style="height:100%"></i></div>
+				</div>
+				<div class="result-card">
+					<div class="result-card__head">
+						<svg width="30" height="30" aria-hidden="true"><use href="#ff-mark"/></svg>
+						<span>FasterFy</span>
+						<span class="pill" data-i18n="hero.card.live">Live</span>
+					</div>
+					<div class="stat">
+						<span class="stat__value" data-count="73">73%</span>
+						<span class="stat__label" data-i18n="hero.card.stat1">Average weight reduction</span>
+					</div>
+					<div class="bar"><span style="width:73%"></span></div>
+					<div class="result-card__grid">
+						<div><strong data-count="1248">1,248</strong><span data-i18n="hero.card.stat2">Images optimized</span></div>
+						<div><strong>WebP</strong><span data-i18n="hero.card.stat3">+ AVIF output</span></div>
+						<div><strong data-count="100">100%</strong><span data-i18n="hero.card.stat4">Alt text coverage</span></div>
+						<div><strong>0</strong><span data-i18n="hero.card.stat5">Originals lost</span></div>
+					</div>
+				</div>
+				<div class="float-card float-card--b">
+					<span class="float-card__label" data-i18n="float.joined">Joined the waitlist</span>
+					<span class="float-card__value" data-count="1248">1,248</span>
+					<div class="float-card__avatars" aria-hidden="true"><span>A</span><span>M</span><span>J</span><span>+</span></div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="strip" aria-label="Highlights">
+		<div class="container strip__inner">
+			<span data-i18n="strip.1">WebP &amp; AVIF</span>
+			<span data-i18n="strip.2">AI Alt Text &amp; SEO</span>
+			<span data-i18n="strip.3">Bulk gallery processing</span>
+			<span data-i18n="strip.4">Smart compression</span>
+			<span data-i18n="strip.5">Auto semantic rename</span>
+			<span data-i18n="strip.6">SVG sanitization</span>
+		</div>
+	</section>
+
+	<section class="section" id="features" aria-labelledby="features-title">
+		<div class="container">
+			<header class="section__head">
+				<p class="eyebrow eyebrow--center" data-i18n="features.eyebrow">What you get</p>
+				<h2 id="features-title" data-i18n="features.title">Real work, done for you</h2>
+				<p class="section__sub" data-i18n="features.sub">Every feature is built to save time and lift performance — measurable wins, not busywork.</p>
+			</header>
+			<ul class="cards" role="list">
+				<li class="card"><div class="card__icon" aria-hidden="true">⚡</div><h3 data-i18n="feat.1.t">Next-gen formats</h3><p data-i18n="feat.1.d">Convert JPG to WebP or AVIF and crush PNGs without visible quality loss — the core lever for Core Web Vitals.</p></li>
+				<li class="card"><div class="card__icon" aria-hidden="true">🤖</div><h3 data-i18n="feat.2.t">AI alt text &amp; SEO</h3><p data-i18n="feat.2.d">Multimodal vision writes accurate alt text, titles and descriptions — boosting accessibility and search rankings.</p></li>
+				<li class="card"><div class="card__icon" aria-hidden="true">🗂️</div><h3 data-i18n="feat.3.t">Bulk gallery management</h3><p data-i18n="feat.3.d">Process your whole library in batches. Select, optimize, generate AI text or revert — hundreds of images at once.</p></li>
+				<li class="card"><div class="card__icon" aria-hidden="true">✏️</div><h3 data-i18n="feat.4.t">Automatic semantic rename</h3><p data-i18n="feat.4.d">Turn "IMG_4821.jpg" into descriptive, keyword-rich filenames that search engines actually read.</p></li>
+				<li class="card"><div class="card__icon" aria-hidden="true">↩️</div><h3 data-i18n="feat.5.t">Non-destructive rollback</h3><p data-i18n="feat.5.d">Every original is backed up before any change. Restore any asset with a single click — zero risk.</p></li>
+				<li class="card"><div class="card__icon" aria-hidden="true">🛡️</div><h3 data-i18n="feat.6.t">Security built in</h3><p data-i18n="feat.6.d">SVG sanitization strips malicious scripts, and optional NSFW moderation protects your AI usage and brand.</p></li>
+			</ul>
+		</div>
+	</section>
+
+	<section class="section section--alt" id="how" aria-labelledby="how-title">
+		<div class="container">
+			<header class="section__head">
+				<p class="eyebrow eyebrow--center" data-i18n="how.eyebrow">How it works</p>
+				<h2 id="how-title" data-i18n="how.title">Live in minutes, not days</h2>
+			</header>
+			<ol class="steps" role="list">
+				<li class="step"><span class="step__num" aria-hidden="true">1</span><h3 data-i18n="how.1.t">Install &amp; connect</h3><p data-i18n="how.1.d">Activate the plugin on WordPress. No build tools, no servers to manage.</p></li>
+				<li class="step"><span class="step__num" aria-hidden="true">2</span><h3 data-i18n="how.2.t">Scan your library</h3><p data-i18n="how.2.d">FasterFy finds every image and shows exactly what can be optimized — retroactively.</p></li>
+				<li class="step"><span class="step__num" aria-hidden="true">3</span><h3 data-i18n="how.3.t">Optimize in bulk</h3><p data-i18n="how.3.d">Run a batch and watch weight drop and SEO coverage climb. Roll back anytime.</p></li>
+			</ol>
+		</div>
+	</section>
+
+	<section class="roi" aria-label="Impact in numbers">
+		<div class="container roi__grid">
+			<div class="roi__item"><span class="roi__arrow" aria-hidden="true">↑ 73%</span><strong data-count="73">73%</strong><span data-i18n="roi.1">Lighter images on average</span></div>
+			<div class="roi__item"><span class="roi__arrow" aria-hidden="true">↑</span><strong data-i18n="roi.2v">Hours</strong><span data-i18n="roi.2">Saved every week vs. manual work</span></div>
+			<div class="roi__item"><span class="roi__arrow" aria-hidden="true">↑ 100%</span><strong>100%</strong><span data-i18n="roi.3">Alt text coverage for SEO</span></div>
+			<div class="roi__item"><span class="roi__arrow" aria-hidden="true">✓</span><strong data-i18n="roi.4v">Zero</strong><span data-i18n="roi.4">Originals ever lost</span></div>
+		</div>
+	</section>
+
+	<section class="section" id="pricing" aria-labelledby="pricing-title">
+		<div class="container">
+			<header class="section__head">
+				<p class="eyebrow eyebrow--center" data-i18n="pricing.eyebrow">Pricing</p>
+				<h2 id="pricing-title" data-i18n="pricing.title">Simple plans that scale with you</h2>
+				<p class="section__sub" data-i18n="pricing.sub">Founding-member pricing for everyone on the waitlist. Prices below are placeholders for pre-launch.</p>
+				<div class="billing-toggle" role="group" aria-label="Billing period">
+					<button type="button" class="billing-btn is-active" data-billing="monthly" aria-pressed="true" data-i18n="pricing.monthly">Monthly</button>
+					<button type="button" class="billing-btn" data-billing="annual" aria-pressed="false" data-i18n="pricing.annual">Annual · save 20%</button>
+				</div>
+			</header>
+			<div class="plans">
+				<article class="plan">
+					<h3 class="plan__name" data-i18n="plan.lite.name">Lite</h3>
+					<p class="plan__desc" data-i18n="plan.lite.desc">For personal sites &amp; blogs getting started.</p>
+					<p class="plan__price"><span class="plan__amount">$0</span><span class="plan__period" data-i18n="plan.free">free forever</span></p>
+					<a class="btn btn--ghost btn--block" href="#waitlist" data-i18n="plan.lite.cta">Start free</a>
+					<ul class="plan__features" role="list">
+						<li data-i18n="plan.lite.f1">WebP/AVIF conversion &amp; compression</li>
+						<li data-i18n="plan.lite.f2">SVG sanitization</li>
+						<li data-i18n="plan.lite.f3">One-click optimize</li>
+						<li data-i18n="plan.lite.f4">Non-destructive rollback</li>
+						<li data-i18n="plan.lite.f5">100 AI credits / month</li>
+					</ul>
+				</article>
+				<article class="plan plan--featured">
+					<span class="plan__badge" data-i18n="plan.popular">Most popular</span>
+					<h3 class="plan__name" data-i18n="plan.pro.name">Pro</h3>
+					<p class="plan__desc" data-i18n="plan.pro.desc">For professionals &amp; growing businesses.</p>
+					<p class="plan__price"><span class="plan__amount" data-monthly="$19" data-annual="$15">$19</span><span class="plan__period" data-i18n="plan.permo">/ month</span></p>
+					<a class="btn btn--primary btn--block" href="#waitlist" data-i18n="plan.pro.cta">Join waitlist</a>
+					<ul class="plan__features" role="list">
+						<li data-i18n="plan.pro.f1">Everything in Lite</li>
+						<li data-i18n="plan.pro.f2">AI alt text, titles &amp; descriptions</li>
+						<li data-i18n="plan.pro.f3">Automatic semantic rename</li>
+						<li data-i18n="plan.pro.f4">Bulk gallery processing</li>
+						<li data-i18n="plan.pro.f5">NSFW moderation &amp; advanced controls</li>
+						<li data-i18n="plan.pro.f6">5,000 AI credits / month</li>
+					</ul>
+				</article>
+				<article class="plan">
+					<h3 class="plan__name" data-i18n="plan.agency.name">Agency</h3>
+					<p class="plan__desc" data-i18n="plan.agency.desc">For agencies managing many client sites.</p>
+					<p class="plan__price"><span class="plan__amount" data-monthly="$59" data-annual="$47">$59</span><span class="plan__period" data-i18n="plan.permo">/ month</span></p>
+					<a class="btn btn--ghost btn--block" href="#waitlist" data-i18n="plan.agency.cta">Join waitlist</a>
+					<ul class="plan__features" role="list">
+						<li data-i18n="plan.agency.f1">Everything in Pro</li>
+						<li data-i18n="plan.agency.f2">Multi-site management</li>
+						<li data-i18n="plan.agency.f3">Priority processing &amp; support</li>
+						<li data-i18n="plan.agency.f4">Exclusion rules &amp; throttling</li>
+						<li data-i18n="plan.agency.f5">25,000 AI credits / month</li>
+					</ul>
+				</article>
+			</div>
+			<p class="pricing__foot" data-i18n="pricing.foot">Prices are placeholders and may change at launch. Waitlist members get founding-member rates.</p>
+		</div>
+	</section>
+
+	<section class="section section--alt" id="faq" aria-labelledby="faq-title">
+		<div class="container container--narrow">
+			<header class="section__head">
+				<p class="eyebrow eyebrow--center" data-i18n="faq.eyebrow">FAQ</p>
+				<h2 id="faq-title" data-i18n="faq.title">Questions, answered</h2>
+			</header>
+			<div class="faq">
+				<details><summary data-i18n="faq.1.q">Will it touch my original files?</summary><p data-i18n="faq.1.a">Never destructively. FasterFy backs up every original before any change, and you can restore any image with one click.</p></details>
+				<details><summary data-i18n="faq.2.q">Do I need AI to use it?</summary><p data-i18n="faq.2.a">No. Technical optimization (WebP/AVIF, compression, SVG) works on its own. AI alt text and SEO are optional add-ons.</p></details>
+				<details><summary data-i18n="faq.3.q">Will it work on my host?</summary><p data-i18n="faq.3.a">Yes. Bulk processing runs in safe, browser-driven batches, so it works reliably even on shared hosting.</p></details>
+				<details><summary data-i18n="faq.4.q">When does it launch?</summary><p data-i18n="faq.4.a">We're in pre-launch. Join the waitlist and you'll be first to get access — plus founding-member pricing.</p></details>
+				<details><summary data-i18n="faq.5.q">Is my data safe?</summary><p data-i18n="faq.5.a">API keys are encrypted at rest, SVGs are sanitized, and sensitive images are never sent to AI when moderation is on.</p></details>
+			</div>
+		</div>
+	</section>
+
+	<section class="cta-final" aria-labelledby="cta-title">
+		<div class="container">
+			<div class="cta-final__inner">
+				<h2 id="cta-title" data-i18n="cta.title">Be first when FasterFy launches</h2>
+				<p data-i18n="cta.sub">Join the waitlist for early access and founding-member pricing.</p>
+				<a class="btn btn--dark btn--lg" href="#waitlist" data-i18n="cta.btn">Join the waitlist</a>
+			</div>
+		</div>
+	</section>
+</main>
+
+<footer class="site-footer">
+	<div class="container footer__inner">
+		<div class="footer__brand">
+			<svg class="brand__mark" width="30" height="30" aria-hidden="true"><use href="#ff-mark"/></svg>
+			<span class="brand__word">Faster<em>Fy</em></span>
+			<p data-i18n="footer.tag">AI media optimization for WordPress.</p>
+		</div>
+		<nav class="footer__links" aria-label="Footer">
+			<a href="#features" data-i18n="nav.features">Features</a>
+			<a href="#pricing" data-i18n="nav.pricing">Pricing</a>
+			<a href="#faq" data-i18n="nav.faq">FAQ</a>
+			<a href="#waitlist" data-i18n="nav.cta">Join waitlist</a>
+		</nav>
+	</div>
+	<div class="container footer__bottom">
+		<p>&copy; <span id="year">2026</span> FasterFy. <span data-i18n="footer.rights">All rights reserved.</span></p>
+	</div>
+</footer>
+
+<script>
+(function(){
+	'use strict';
+	var I18N={
+		en:{'skip':'Skip to the waitlist','preview.ribbon':'Static preview — the form is simulated (no data is sent or stored).','nav.features':'Features','nav.how':'How it works','nav.pricing':'Pricing','nav.faq':'FAQ','nav.cta':'Join waitlist','hero.badge':'Pre-launch · Early access','hero.title':'Stop optimizing WordPress images by hand.','hero.lead':'FasterFy converts, compresses and writes SEO alt text for your entire media library automatically — so your site loads faster, ranks higher and you get hours back every week.','form.email.label':'Work email','form.email.placeholder':'you@yourcompany.com','form.submit':'Get early access','form.consent':'I agree to receive launch updates. No spam — unsubscribe anytime.','form.note':'Join the waitlist and lock in a founding-member discount.','hero.trust.1':'No credit card','hero.trust.2':'Non-destructive · 1-click rollback','hero.trust.3':'Built for WordPress','float.saved':'Saved this week','float.joined':'Joined the waitlist','hero.card.live':'Live','hero.card.stat1':'Average weight reduction','hero.card.stat2':'Images optimized','hero.card.stat3':'+ AVIF output','hero.card.stat4':'Alt text coverage','hero.card.stat5':'Originals lost','strip.1':'WebP & AVIF','strip.2':'AI Alt Text & SEO','strip.3':'Bulk gallery processing','strip.4':'Smart compression','strip.5':'Auto semantic rename','strip.6':'SVG sanitization','features.eyebrow':'What you get','features.title':'Real work, done for you','features.sub':'Every feature is built to save time and lift performance — measurable wins, not busywork.','feat.1.t':'Next-gen formats','feat.1.d':'Convert JPG to WebP or AVIF and crush PNGs without visible quality loss — the core lever for Core Web Vitals.','feat.2.t':'AI alt text & SEO','feat.2.d':'Multimodal vision writes accurate alt text, titles and descriptions — boosting accessibility and search rankings.','feat.3.t':'Bulk gallery management','feat.3.d':'Process your whole library in batches. Select, optimize, generate AI text or revert — hundreds of images at once.','feat.4.t':'Automatic semantic rename','feat.4.d':'Turn "IMG_4821.jpg" into descriptive, keyword-rich filenames that search engines actually read.','feat.5.t':'Non-destructive rollback','feat.5.d':'Every original is backed up before any change. Restore any asset with a single click — zero risk.','feat.6.t':'Security built in','feat.6.d':'SVG sanitization strips malicious scripts, and optional NSFW moderation protects your AI usage and brand.','how.eyebrow':'How it works','how.title':'Live in minutes, not days','how.1.t':'Install & connect','how.1.d':'Activate the plugin on WordPress. No build tools, no servers to manage.','how.2.t':'Scan your library','how.2.d':'FasterFy finds every image and shows exactly what can be optimized — retroactively.','how.3.t':'Optimize in bulk','how.3.d':'Run a batch and watch weight drop and SEO coverage climb. Roll back anytime.','roi.1':'Lighter images on average','roi.2v':'Hours','roi.2':'Saved every week vs. manual work','roi.3':'Alt text coverage for SEO','roi.4v':'Zero','roi.4':'Originals ever lost','pricing.eyebrow':'Pricing','pricing.title':'Simple plans that scale with you','pricing.sub':'Founding-member pricing for everyone on the waitlist. Prices below are placeholders for pre-launch.','pricing.monthly':'Monthly','pricing.annual':'Annual · save 20%','plan.lite.name':'Lite','plan.lite.desc':'For personal sites & blogs getting started.','plan.free':'free forever','plan.lite.cta':'Start free','plan.lite.f1':'WebP/AVIF conversion & compression','plan.lite.f2':'SVG sanitization','plan.lite.f3':'One-click optimize','plan.lite.f4':'Non-destructive rollback','plan.lite.f5':'100 AI credits / month','plan.popular':'Most popular','plan.pro.name':'Pro','plan.pro.desc':'For professionals & growing businesses.','plan.permo':'/ month','plan.pro.cta':'Join waitlist','plan.pro.f1':'Everything in Lite','plan.pro.f2':'AI alt text, titles & descriptions','plan.pro.f3':'Automatic semantic rename','plan.pro.f4':'Bulk gallery processing','plan.pro.f5':'NSFW moderation & advanced controls','plan.pro.f6':'5,000 AI credits / month','plan.agency.name':'Agency','plan.agency.desc':'For agencies managing many client sites.','plan.agency.cta':'Join waitlist','plan.agency.f1':'Everything in Pro','plan.agency.f2':'Multi-site management','plan.agency.f3':'Priority processing & support','plan.agency.f4':'Exclusion rules & throttling','plan.agency.f5':'25,000 AI credits / month','pricing.foot':'Prices are placeholders and may change at launch. Waitlist members get founding-member rates.','faq.eyebrow':'FAQ','faq.title':'Questions, answered','faq.1.q':'Will it touch my original files?','faq.1.a':'Never destructively. FasterFy backs up every original before any change, and you can restore any image with one click.','faq.2.q':'Do I need AI to use it?','faq.2.a':'No. Technical optimization (WebP/AVIF, compression, SVG) works on its own. AI alt text and SEO are optional add-ons.','faq.3.q':'Will it work on my host?','faq.3.a':'Yes. Bulk processing runs in safe, browser-driven batches, so it works reliably even on shared hosting.','faq.4.q':'When does it launch?','faq.4.a':"We're in pre-launch. Join the waitlist and you'll be first to get access — plus founding-member pricing.",'faq.5.q':'Is my data safe?','faq.5.a':'API keys are encrypted at rest, SVGs are sanitized, and sensitive images are never sent to AI when moderation is on.','cta.title':'Be first when FasterFy launches','cta.sub':'Join the waitlist for early access and founding-member pricing.','cta.btn':'Join the waitlist','footer.tag':'AI media optimization for WordPress.','footer.rights':'All rights reserved.','msg.invalidEmail':'Please enter a valid email address.','msg.consent':'Please accept to continue.','msg.sending':'Sending…','msg.success':"Demo: you'd be on the list! (No data was sent in this preview.)",'msg.error':'Something went wrong. Please try again.'},
+		es:{'skip':'Saltar a la lista de espera','preview.ribbon':'Vista previa estática — el formulario es simulado (no se envía ni guarda ningún dato).','nav.features':'Funciones','nav.how':'Cómo funciona','nav.pricing':'Precios','nav.faq':'Preguntas','nav.cta':'Unirme a la lista','hero.badge':'Prelanzamiento · Acceso anticipado','hero.title':'Deja de optimizar las imágenes de WordPress a mano.','hero.lead':'FasterFy convierte, comprime y redacta el alt text SEO de toda tu biblioteca de medios automáticamente — para que tu sitio cargue más rápido, posicione mejor y recuperes horas cada semana.','form.email.label':'Correo de trabajo','form.email.placeholder':'tu@tuempresa.com','form.submit':'Quiero acceso anticipado','form.consent':'Acepto recibir novedades del lanzamiento. Sin spam — cancela cuando quieras.','form.note':'Únete a la lista y asegura un descuento de miembro fundador.','hero.trust.1':'Sin tarjeta de crédito','hero.trust.2':'No destructivo · reversión en 1 clic','hero.trust.3':'Hecho para WordPress','float.saved':'Ahorrado esta semana','float.joined':'En la lista de espera','hero.card.live':'En vivo','hero.card.stat1':'Reducción de peso promedio','hero.card.stat2':'Imágenes optimizadas','hero.card.stat3':'+ salida AVIF','hero.card.stat4':'Cobertura de alt text','hero.card.stat5':'Originales perdidos','strip.1':'WebP y AVIF','strip.2':'Alt Text con IA y SEO','strip.3':'Procesamiento masivo','strip.4':'Compresión inteligente','strip.5':'Renombrado semántico','strip.6':'Sanitización de SVG','features.eyebrow':'Lo que obtienes','features.title':'Trabajo real, hecho por ti','features.sub':'Cada función está pensada para ahorrar tiempo y mejorar el rendimiento — resultados medibles, no tareas tediosas.','feat.1.t':'Formatos de nueva generación','feat.1.d':'Convierte JPG a WebP o AVIF y comprime PNG sin pérdida visible de calidad — la palanca clave para los Core Web Vitals.','feat.2.t':'Alt text con IA y SEO','feat.2.d':'La visión multimodal redacta alt text, títulos y descripciones precisos — mejorando la accesibilidad y el posicionamiento.','feat.3.t':'Gestión masiva de galerías','feat.3.d':'Procesa toda tu biblioteca por lotes. Selecciona, optimiza, genera textos con IA o revierte — cientos de imágenes a la vez.','feat.4.t':'Renombrado semántico automático','feat.4.d':'Convierte "IMG_4821.jpg" en nombres descriptivos y ricos en palabras clave que los buscadores sí leen.','feat.5.t':'Reversión no destructiva','feat.5.d':'Cada original se respalda antes de cualquier cambio. Restaura cualquier archivo con un clic — sin riesgos.','feat.6.t':'Seguridad incorporada','feat.6.d':'La sanitización de SVG elimina scripts maliciosos y la moderación NSFW opcional protege tu uso de IA y tu marca.','how.eyebrow':'Cómo funciona','how.title':'Operativo en minutos, no en días','how.1.t':'Instala y conecta','how.1.d':'Activa el plugin en WordPress. Sin herramientas de compilación ni servidores que administrar.','how.2.t':'Escanea tu biblioteca','how.2.d':'FasterFy encuentra cada imagen y muestra exactamente qué se puede optimizar — de forma retroactiva.','how.3.t':'Optimiza en masa','how.3.d':'Ejecuta un lote y mira cómo baja el peso y sube la cobertura SEO. Revierte cuando quieras.','roi.1':'Imágenes más livianas en promedio','roi.2v':'Horas','roi.2':'Ahorradas cada semana vs. trabajo manual','roi.3':'Cobertura de alt text para SEO','roi.4v':'Cero','roi.4':'Originales perdidos, nunca','pricing.eyebrow':'Precios','pricing.title':'Planes simples que crecen contigo','pricing.sub':'Precio de miembro fundador para toda la lista de espera. Los precios de abajo son provisionales para el prelanzamiento.','pricing.monthly':'Mensual','pricing.annual':'Anual · ahorra 20%','plan.lite.name':'Lite','plan.lite.desc':'Para sitios personales y blogs que empiezan.','plan.free':'gratis para siempre','plan.lite.cta':'Empezar gratis','plan.lite.f1':'Conversión WebP/AVIF y compresión','plan.lite.f2':'Sanitización de SVG','plan.lite.f3':'Optimización en un clic','plan.lite.f4':'Reversión no destructiva','plan.lite.f5':'100 créditos de IA / mes','plan.popular':'Más popular','plan.pro.name':'Pro','plan.pro.desc':'Para profesionales y negocios en crecimiento.','plan.permo':'/ mes','plan.pro.cta':'Unirme a la lista','plan.pro.f1':'Todo lo de Lite','plan.pro.f2':'Alt text, títulos y descripciones con IA','plan.pro.f3':'Renombrado semántico automático','plan.pro.f4':'Procesamiento masivo de galerías','plan.pro.f5':'Moderación NSFW y controles avanzados','plan.pro.f6':'5.000 créditos de IA / mes','plan.agency.name':'Agencia','plan.agency.desc':'Para agencias que gestionan muchos sitios de clientes.','plan.agency.cta':'Unirme a la lista','plan.agency.f1':'Todo lo de Pro','plan.agency.f2':'Gestión multisitio','plan.agency.f3':'Procesamiento y soporte prioritario','plan.agency.f4':'Reglas de exclusión y throttling','plan.agency.f5':'25.000 créditos de IA / mes','pricing.foot':'Los precios son provisionales y pueden cambiar en el lanzamiento. Los miembros de la lista obtienen tarifas de fundador.','faq.eyebrow':'Preguntas','faq.title':'Preguntas, respondidas','faq.1.q':'¿Toca mis archivos originales?','faq.1.a':'Nunca de forma destructiva. FasterFy respalda cada original antes de cualquier cambio y puedes restaurar cualquier imagen con un clic.','faq.2.q':'¿Necesito IA para usarlo?','faq.2.a':'No. La optimización técnica (WebP/AVIF, compresión, SVG) funciona por sí sola. El alt text con IA y el SEO son complementos opcionales.','faq.3.q':'¿Funcionará en mi hosting?','faq.3.a':'Sí. El procesamiento masivo se ejecuta en lotes seguros conducidos por el navegador, así que funciona de forma fiable incluso en hosting compartido.','faq.4.q':'¿Cuándo se lanza?','faq.4.a':'Estamos en prelanzamiento. Únete a la lista y serás de los primeros en obtener acceso — además del precio de miembro fundador.','faq.5.q':'¿Están seguros mis datos?','faq.5.a':'Las claves de API se cifran en reposo, los SVG se sanitizan y las imágenes sensibles nunca se envían a la IA cuando la moderación está activa.','cta.title':'Sé el primero cuando FasterFy se lance','cta.sub':'Únete a la lista para acceso anticipado y precio de miembro fundador.','cta.btn':'Unirme a la lista','footer.tag':'Optimización de medios con IA para WordPress.','footer.rights':'Todos los derechos reservados.','msg.invalidEmail':'Introduce una dirección de correo válida.','msg.consent':'Acepta para continuar.','msg.sending':'Enviando…','msg.success':'Demo: ¡estarías en la lista! (En esta vista previa no se envió ningún dato.)','msg.error':'Algo salió mal. Inténtalo de nuevo.'}
+	};
+	var KEY='fasterfy_lang',cur='en';
+	var REDUCE=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	function t(k){return (I18N[cur]||I18N.en)[k]||I18N.en[k]||'';}
+	function apply(lang){if(!I18N[lang])lang='en';cur=lang;document.documentElement.lang=lang;
+		document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n'),a=el.getAttribute('data-i18n-attr'),v=t(k);if(!v)return;if(a)el.setAttribute(a,v);else el.textContent=v;});
+		document.querySelectorAll('.lang-btn').forEach(function(b){var on=b.getAttribute('data-lang')===lang;b.classList.toggle('is-active',on);b.setAttribute('aria-pressed',on?'true':'false');});
+		try{localStorage.setItem(KEY,lang);}catch(e){}}
+	function initLang(){var s=null;try{s=localStorage.getItem(KEY);}catch(e){}if(!s){var n=(navigator.language||'en').toLowerCase();s=n.indexOf('es')===0?'es':'en';}apply(s);
+		document.querySelectorAll('.lang-btn').forEach(function(b){b.addEventListener('click',function(){apply(b.getAttribute('data-lang'));});});}
+	function initBilling(){var b=document.querySelectorAll('.billing-btn');if(!b.length)return;function set(p){document.querySelectorAll('.plan__amount').forEach(function(el){var v=el.getAttribute('data-'+p);if(v)el.textContent=v;});b.forEach(function(x){var on=x.getAttribute('data-billing')===p;x.classList.toggle('is-active',on);x.setAttribute('aria-pressed',on?'true':'false');});}b.forEach(function(x){x.addEventListener('click',function(){set(x.getAttribute('data-billing'));});});}
+	function observe(els,onShow,opts){if(!els.length)return;if(!('IntersectionObserver'in window)){els.forEach(onShow);return;}var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){onShow(e.target);io.unobserve(e.target);}});},opts||{threshold:.16,rootMargin:'0px 0px -8% 0px'});els.forEach(function(el){io.observe(el);});}
+	function initReveal(){if(REDUCE)return;
+		var rv=document.querySelectorAll('.section__head,.cta-final__inner,.strip__inner');rv.forEach(function(el){el.classList.add('reveal-init');});observe(rv,function(el){el.classList.add('is-visible');});
+		var gr=document.querySelectorAll('.cards,.steps,.plans,.roi__grid');gr.forEach(function(el){el.classList.add('stagger-init');});observe(gr,function(el){el.classList.add('is-visible');});
+		var bars=document.querySelectorAll('.bar');observe(bars,function(el){el.classList.add('is-filled');},{threshold:.4});}
+	function initScrollSpy(){var links=Array.prototype.slice.call(document.querySelectorAll('.nav a[href^="#"]'));if(!links.length||!('IntersectionObserver'in window))return;var map={};links.forEach(function(a){var id=a.getAttribute('href').slice(1),sec=document.getElementById(id);if(sec)map[id]=a;});var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.remove('is-active');});var ac=map[e.target.id];if(ac)ac.classList.add('is-active');}});},{rootMargin:'-45% 0px -50% 0px'});Object.keys(map).forEach(function(id){io.observe(document.getElementById(id));});}
+	function initHeader(){var h=document.querySelector('.site-header');if(!h)return;var tk=false;function up(){h.classList.toggle('is-scrolled',window.scrollY>12);tk=false;}window.addEventListener('scroll',function(){if(!tk){window.requestAnimationFrame(up);tk=true;}},{passive:true});up();}
+	function initCounters(){var els=document.querySelectorAll('[data-count]');if(!els.length)return;function run(el){var tg=parseInt(el.getAttribute('data-count'),10)||0,sf=(el.textContent.match(/[^0-9.,]+$/)||[''])[0];if(REDUCE||!('IntersectionObserver'in window)){el.textContent=tg.toLocaleString()+sf;return;}var st=null,d=1200;function step(ts){if(!st)st=ts;var p=Math.min((ts-st)/d,1),e=1-Math.pow(1-p,3);el.textContent=Math.round(tg*e).toLocaleString()+sf;if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}if(!('IntersectionObserver'in window)){els.forEach(run);return;}var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){run(e.target);io.unobserve(e.target);}});},{threshold:.5});els.forEach(function(el){io.observe(el);});}
+	function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);}
+	function initForm(){var f=document.getElementById('waitlist-form');if(!f)return;var email=document.getElementById('email'),err=document.getElementById('email-error'),fb=document.getElementById('form-feedback'),cs=document.getElementById('consent'),btn=f.querySelector('button[type="submit"]');
+		function showErr(m){err.textContent=m;err.hidden=false;email.setAttribute('aria-invalid','true');}
+		function clr(){err.hidden=true;err.textContent='';email.removeAttribute('aria-invalid');}
+		function fbk(m,k){fb.textContent=m;fb.hidden=false;fb.classList.remove('is-success','is-error');fb.classList.add(k==='success'?'is-success':'is-error');}
+		email.addEventListener('input',clr);
+		f.addEventListener('submit',function(e){e.preventDefault();clr();fb.hidden=true;
+			if(!validEmail((email.value||'').trim())){showErr(t('msg.invalidEmail'));email.focus();return;}
+			if(cs&&!cs.checked){fbk(t('msg.consent'),'error');cs.focus();return;}
+			var o=btn.textContent;btn.disabled=true;btn.textContent=t('msg.sending');
+			setTimeout(function(){fbk(t('msg.success'),'success');f.reset();btn.disabled=false;btn.textContent=o;},900);
+		});}
+	function init(){document.getElementById('year').textContent=new Date().getFullYear();initLang();initBilling();initReveal();initScrollSpy();initHeader();initCounters();initForm();}
+	if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+# FasterFy Landing — Apache configuration
+# Security hardening + performance (compression & long-lived asset caching).
+
+# ---- Default document ----
+DirectoryIndex index.php index.html
+
+# ---- Block access to internal folders/files ----
+<FilesMatch "\.(jsonl|log|md)$">
+	Require all denied
+</FilesMatch>
+
+RedirectMatch 403 ^/(includes|data)/.*$
+
+# ---- Disable directory listing ----
+Options -Indexes
+
+# ---- Compression (Core Web Vitals: smaller transfer) ----
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+# ---- Caching of static assets (immutable, fingerprinted via ?v=) ----
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresByType text/css "access plus 1 year"
+	ExpiresByType application/javascript "access plus 1 year"
+	ExpiresByType image/svg+xml "access plus 1 year"
+	ExpiresByType image/x-icon "access plus 1 year"
+	ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_headers.c>
+	<FilesMatch "\.(css|js|svg|ico)$">
+		Header set Cache-Control "public, max-age=31536000, immutable"
+	</FilesMatch>
+	# Keep HTML fresh (dynamic PHP).
+	<FilesMatch "\.php$">
+		Header set Cache-Control "no-store"
+	</FilesMatch>
+</IfModule>
