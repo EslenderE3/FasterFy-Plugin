@@ -75,6 +75,10 @@ Todas las rutas requieren capacidad `manage_options` y nonce `wp_rest`.
 
 == Changelog ==
 
+= 1.0.17 =
+* Rendimiento rediseñado: tarjetas KPI, donut animado de progreso, gráfico de composición por tipo de archivo y comparativa antes/después con barras animadas y métricas de ROI.
+* UI: corregido el título de la ficha de detalle que chocaba con el botón de cerrar.
+
 = 1.0.16 =
 * Biblioteca: vista de detalle por imagen (clic en la miniatura o en "Detalles"): muestra formato, dimensiones, tamaños, ahorro y %, conversión, textos generados (alt/título/leyenda/descripción), respaldo y enlace a WP.
 * Biblioteca: nuevo orden "Tipo de archivo"; corrección del "Seleccionar todo / Limpiar".

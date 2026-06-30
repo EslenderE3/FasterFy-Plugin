@@ -643,44 +643,99 @@
 	 * Vista: Rendimiento (Performance Tracker)
 	 * ============================================================ */
 	function viewPerformance( view ) {
-		view.innerHTML = topbar( 'Rendimiento', 'Impacto de FasterFy en Web Core Vitals (estimación).', '' ) +
+		view.innerHTML = topbar( 'Rendimiento', 'Impacto de FasterFy en el peso de tu sitio y en Web Core Vitals (estimación).', '' ) +
 			'<div id="ff-perf-body"><div class="ff-empty"><span class="ff-spinner"></span> Calculando…</div></div>';
-		loadSummary().then( function () {
-			var body = document.getElementById( 'ff-perf-body' );
-			if ( ! body ) { return; }
-			var lib = State.summary.library;
-			var saved = lib.total_saved || 0;
-			// Estimaciones derivadas (didácticas) del ahorro de bytes.
-			var avgConn = 1.5 * 1024 * 1024 / 8; // ~1.5 Mbps en bytes/s.
-			var msSaved = Math.round( ( saved / avgConn ) * 1000 );
-			var lcpGain = Math.min( 60, Math.round( pct( lib.optimized, lib.total ) * 0.6 ) );
-
-			body.innerHTML =
-				'<div class="ff-card ff-card--pad-lg ff-mt">' +
-					'<h3>Retorno de inversión técnico</h3>' +
-					'<div class="ff-metrics">' +
-						'<div class="ff-metric"><b>' + bytes( saved ) + '</b><small>Bytes ahorrados (total)</small></div>' +
-						'<div class="ff-metric"><b>' + ( msSaved > 1000 ? ( msSaved / 1000 ).toFixed( 1 ) + ' s' : msSaved + ' ms' ) + '</b><small>Tiempo de carga estimado salvado</small></div>' +
-						'<div class="ff-metric"><b>-' + lcpGain + '%</b><small>Mejora estimada de LCP</small></div>' +
-					'</div>' +
-				'</div>' +
-				'<div class="ff-card ff-card--pad-lg ff-mt-lg">' +
-					'<h3>Comparativa antes / después</h3>' +
-					perfBars( lib ) +
-					'<p class="ff-muted ff-mt" style="font-size:12px">* Métricas estimadas a partir del volumen de bytes optimizados. Para datos reales conecta Google PageSpeed Insights mediante el hook <code>fasterfy_performance_metrics</code>.</p>' +
-				'</div>';
-		} );
+		loadSummary().then( renderPerformance );
 	}
 
-	function perfBars( lib ) {
+	function msHuman( ms ) {
+		return ms >= 1000 ? ( ms / 1000 ).toFixed( 1 ) + ' s' : ms + ' ms';
+	}
+
+	function renderPerformance() {
+		var body = document.getElementById( 'ff-perf-body' );
+		if ( ! body || ! State.summary ) { return; }
+		var lib = State.summary.library;
+		var saved = lib.total_saved || 0;
 		var optimized = lib.optimized || 0;
-		var total = lib.total || 1;
-		var beforeW = 100;
-		var afterW = Math.max( 12, 100 - Math.round( ( optimized / total ) * 70 ) );
-		return '<div class="ff-compare"><div class="ff-compare__bar"><i>Antes (peso de página relativo)</i>' +
-			'<div class="ff-bar-track ff-bar-before"><span style="width:' + beforeW + '%"></span></div></div></div>' +
-			'<div class="ff-compare"><div class="ff-compare__bar"><i>Después de FasterFy</i>' +
-			'<div class="ff-bar-track ff-bar-after"><span style="width:' + afterW + '%"></span></div></div></div>';
+		var total = lib.total || 0;
+		var ratio = pct( optimized, total );
+		var avgConn = 1.5 * 1024 * 1024 / 8; // ~1.5 Mbps en bytes/s.
+		var msSaved = Math.round( ( saved / avgConn ) * 1000 );
+		var avgPerImg = optimized ? Math.round( saved / optimized ) : 0;
+		var afterW = Math.max( 15, 100 - Math.round( ratio * 0.6 ) );
+		var lcpGain = Math.min( 60, Math.round( ratio * 0.6 ) );
+
+		body.innerHTML =
+			'<div class="ff-grid ff-grid--stats ff-mt">' +
+				statCard( 'Espacio ahorrado', bytes( saved ), 'Total acumulado', '💾' ) +
+				statCard( 'Imágenes optimizadas', optimized, ratio + '% de la biblioteca', '✅' ) +
+				statCard( 'Carga salvada (est.)', msHuman( msSaved ), 'Conexión móvil ~1.5 Mbps', '⚡' ) +
+				statCard( 'Ahorro medio/imagen', bytes( avgPerImg ), 'Por activo optimizado', '📉' ) +
+			'</div>' +
+			'<div class="ff-grid ff-grid--2 ff-mt-lg">' +
+				'<div class="ff-card ff-card--pad-lg"><h3>Progreso de optimización</h3>' +
+					'<div class="ff-ring">' + perfDonut( ratio ) +
+						'<div><div class="ff-card__sub">Optimizadas <b style="color:var(--ff-text)">' + optimized + '</b></div>' +
+						'<div class="ff-card__sub" style="margin-top:6px">Pendientes <b style="color:var(--ff-text)">' + ( lib.pending || 0 ) + '</b></div>' +
+						'<div class="ff-card__sub" style="margin-top:6px">Total <b style="color:var(--ff-text)">' + total + '</b></div></div>' +
+					'</div>' +
+				'</div>' +
+				'<div class="ff-card ff-card--pad-lg"><h3>Composición de la biblioteca</h3>' + perfTypeBars( lib.by_type ) + '</div>' +
+			'</div>' +
+			'<div class="ff-card ff-card--pad-lg ff-mt-lg">' +
+				'<h3>Comparativa antes / después</h3>' +
+				'<div class="ff-compare"><div class="ff-compare__bar"><i>Antes — peso relativo de imágenes</i>' +
+					'<div class="ff-bar-track ff-bar-before"><span data-grow="100%" style="width:0">100%</span></div></div></div>' +
+				'<div class="ff-compare"><div class="ff-compare__bar"><i>Después de FasterFy <span class="ff-badge ff-badge--optimized">−' + ( 100 - afterW ) + '%</span></i>' +
+					'<div class="ff-bar-track ff-bar-after"><span data-grow="' + afterW + '%" style="width:0">' + afterW + '%</span></div></div></div>' +
+				'<div class="ff-metrics ff-mt-lg">' +
+					'<div class="ff-metric"><b>' + bytes( saved ) + '</b><small>menos que transferir</small></div>' +
+					'<div class="ff-metric"><b>' + msHuman( msSaved ) + '</b><small>tiempo de carga salvado</small></div>' +
+					'<div class="ff-metric"><b>−' + lcpGain + '%</b><small>mejora estimada de LCP</small></div>' +
+				'</div>' +
+				'<p class="ff-muted ff-mt" style="font-size:12px">* Estimaciones a partir del volumen de bytes optimizados. Para métricas reales de Core Web Vitals, conecta Google PageSpeed Insights mediante el hook <code>fasterfy_performance_metrics</code>.</p>' +
+			'</div>';
+
+		animatePerf();
+	}
+
+	function perfDonut( ratio ) {
+		var circ = 2 * Math.PI * 54;
+		var off = circ - ( circ * ratio / 100 );
+		return '<div class="ff-donut">' +
+			'<svg width="150" height="150" viewBox="0 0 150 150">' +
+				'<defs><linearGradient id="ffgrad" x1="0" y1="0" x2="1" y2="1">' +
+					'<stop offset="0%" stop-color="#33ee33"/><stop offset="100%" stop-color="#18c93a"/>' +
+				'</linearGradient></defs>' +
+				'<circle class="ff-ring__track" cx="75" cy="75" r="54"/>' +
+				'<circle class="ff-ring__bar" cx="75" cy="75" r="54" stroke-dasharray="' + circ + '" stroke-dashoffset="' + circ + '" data-doffset="' + off + '"/>' +
+			'</svg>' +
+			'<div class="ff-donut__label"><b>' + ratio + '%</b><span>optimizado</span></div>' +
+		'</div>';
+	}
+
+	function perfTypeBars( byType ) {
+		byType = byType || {};
+		var names = { 'image/jpeg': 'JPEG', 'image/jpg': 'JPG', 'image/png': 'PNG', 'image/webp': 'WebP', 'image/avif': 'AVIF', 'image/svg+xml': 'SVG' };
+		var keys = Object.keys( byType );
+		if ( ! keys.length ) { return '<p class="ff-muted">Sin activos todavía.</p>'; }
+		var max = Math.max.apply( null, keys.map( function ( k ) { return byType[ k ]; } ).concat( [ 1 ] ) );
+		return keys.map( function ( k ) {
+			var w = Math.round( ( byType[ k ] / max ) * 100 );
+			return '<div class="ff-pbar"><i>' + h( names[ k ] || k ) + '</i>' +
+				'<div class="ff-pbar__track"><span data-grow="' + w + '%" style="width:0"></span></div>' +
+				'<b>' + byType[ k ] + '</b></div>';
+		} ).join( '' );
+	}
+
+	function animatePerf() {
+		setTimeout( function () {
+			var body = document.getElementById( 'ff-perf-body' );
+			if ( ! body ) { return; }
+			body.querySelectorAll( '[data-grow]' ).forEach( function ( el ) { el.style.width = el.getAttribute( 'data-grow' ); } );
+			body.querySelectorAll( '[data-doffset]' ).forEach( function ( el ) { el.setAttribute( 'stroke-dashoffset', el.getAttribute( 'data-doffset' ) ); } );
+		}, 80 );
 	}
 
 	/* ============================================================
