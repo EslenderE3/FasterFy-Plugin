@@ -75,6 +75,22 @@ Todas las rutas requieren capacidad `manage_options` y nonce `wp_rest`.
 
 == Changelog ==
 
+= 1.0.16 =
+* Biblioteca: vista de detalle por imagen (clic en la miniatura o en "Detalles"): muestra formato, dimensiones, tamaños, ahorro y %, conversión, textos generados (alt/título/leyenda/descripción), respaldo y enlace a WP.
+* Biblioteca: nuevo orden "Tipo de archivo"; corrección del "Seleccionar todo / Limpiar".
+* Resumen: banner con slider de beneficios (rotación automática + puntos de navegación).
+* UI: inputs y selects con bordes redondeados (consistencia con el diseño).
+
+= 1.0.15 =
+* UI: el panel ocupa exactamente 100vh (barra lateral a altura completa, sin recuadro sobrante) y el scroll queda solo dentro del contenido. Se oculta el pie de WP en la página del plugin para eliminar el scroll de página en escritorio.
+* UI: corregido el hover de los botones (ya no se pierde el fondo ni el texto queda ilegible); ahora usa un realce de brillo.
+
+= 1.0.14 =
+* UI: el panel ocupa todo el bloque de pantalla y se elimina el doble scroll (un único scroll de página). Barra lateral fija (sticky) y botón de tema flotante. Ajustes responsive para tablet y móvil.
+
+= 1.0.13 =
+* Branding: identidad visual FasterFy aplicada (paleta #1F1F1F / #33EE33 / #ffffff). Nuevo logo (escudo hexagonal con rayo y chispa) en la barra lateral, pantalla de carga e ícono del menú de WordPress; botones, anillo de progreso, toggles, toasts y acentos en verde de marca.
+
 = 1.0.12 =
 * IA en imágenes AVIF ya existentes: el plugin lee el AVIF guardado y crea una copia JPEG al vuelo para el análisis (no requiere re-subir las fotos). Respaldo robusto Imagick/GD para garantizar la conversión AVIF/WebP → JPEG.
 

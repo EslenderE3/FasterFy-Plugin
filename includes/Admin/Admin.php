@@ -68,9 +68,22 @@ final class Admin implements Bootable {
 			'manage_options',
 			self::MENU_SLUG,
 			[ $this, 'render_app' ],
-			'dashicons-images-alt2',
+			$this->menu_icon(),
 			81
 		);
+	}
+
+	/**
+	 * Ícono del menú (escudo de marca FasterFy) como data URI SVG.
+	 *
+	 * @return string
+	 */
+	private function menu_icon(): string {
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">'
+			. '<path d="M24 2 44 13 44 35 24 46 4 35 4 13Z" fill="#33EE33"/>'
+			. '<path d="M26 10 15 27 22 27 19 39 33 21 25 21Z" fill="#1F1F1F"/>'
+			. '</svg>';
+		return 'data:image/svg+xml;base64,' . base64_encode( $svg );
 	}
 
 	/**
